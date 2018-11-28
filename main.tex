@@ -1,0 +1,272 @@
+\documentclass[12pt, a4paper]{book}
+\usepackage[spanish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{xparse}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage[margin=1in]{geometry} 
+\usepackage{amsmath,amsthm,amssymb}
+\usepackage{booktabs}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{tikz}
+\usepackage{esvect}
+\usepackage{tcolorbox}
+\usetikzlibrary{arrows,positioning,fit,shapes,calc}
+\usepackage{framed}
+\usepackage{fancyhdr} 
+\usepackage[
+    type={CC},
+    modifier={by-nc},
+    version={4.0},
+]{doclicense}
+\pagestyle{fancy} 
+\usepackage{chessboard}
+\storechessboardstyle{5x5}{maxfield=e5}
+\fancyhead[RE,RO]{\nouppercase{\leftmark}}
+\fancyhead[LE,LO]{\nouppercase{\rightmark}}
+
+\usetikzlibrary{calc,angles,positioning,intersections,quotes,decorations.markings}
+\usepackage{tkz-euclide}
+\usetkzobj{all}
+\usepackage{pgfplots}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{float}
+\usepackage{multicol}
+\usepackage{color}
+ 
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+ 
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+ 
+\lstset{style=mystyle}
+\pgfplotsset{compat=1.5}
+
+%%%%%%%%%%%%%%%%%%%%% Dibujar funciones 
+% https://es.sharelatex.com/learn/Pgfplots_package
+% http://pgfplots.sourceforge.net/gallery.html
+%%%%%%%%%%%%%%%%%%%%% Oficial documentation
+% http://pgfplots.sourceforge.net/pgfplots.pdf
+% http://pgfplots.sourceforge.net/pgfplotstable.pdf
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\I}{\mathbb{I}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\fd}{\rightarrow}
+\newcommand{\cont}{\subset}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newenvironment{theorem}[2][Teorema]{\begin{framed}\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}\end{framed}}
+\newenvironment{regla}[2][Regla]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{axioma}[2][Axioma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{lemma}[2][Lemma]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{exercise}[2][Ejercicio]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{reflection}[2][Reflection]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{proposition}[2][Proposicion]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+\newenvironment{corollary}[2][Corolario]{\begin{trivlist}
+\item[\hskip \labelsep {\bfseries #1}\hskip \labelsep {\bfseries #2.}]}{\end{trivlist}}
+
+\pgfplotsset{soldot/.style={color=blue,only marks,mark=*}} \pgfplotsset{holdot/.style={color=blue,fill=white,only marks,mark=*}}
+
+\usepackage{mdframed}
+\newdimen\arrowsize
+\pgfarrowsdeclare{squarea}{squarea}
+{
+  \arrowsize=0.4pt
+  \advance\arrowsize by.275\pgflinewidth%
+  \pgfarrowsleftextend{+-\arrowsize}
+  \advance\arrowsize by.5\pgflinewidth
+  \pgfarrowsrightextend{+\arrowsize}
+}
+{
+  \arrowsize=0.4pt
+  \advance\arrowsize by.275\pgflinewidth%
+  \pgfsetdash{}{+0pt}
+  \pgfsetroundjoin
+  \pgfpathmoveto{\pgfqpoint{1\arrowsize}{4\arrowsize}}
+  \pgfpathlineto{\pgfqpoint{-7\arrowsize}{4\arrowsize}}
+  \pgfpathlineto{\pgfqpoint{-7\arrowsize}{-4\arrowsize}}
+  \pgfpathlineto{\pgfqpoint{1\arrowsize}{-4\arrowsize}}
+  \pgfpathclose
+  \pgfusepathqfillstroke
+}
+% A open square shaped arrow
+
+\pgfarrowsdeclare{open squarea}{open squarea}%{{-.5bp}{8.5bp}}
+{
+  \arrowsize=0.4pt
+  \advance\arrowsize by.275\pgflinewidth%
+  \pgfarrowsleftextend{+-.5\pgflinewidth}
+  \advance\arrowsize by7\arrowsize
+  \advance\arrowsize by.5\pgflinewidth
+  \pgfarrowsrightextend{+\arrowsize}
+}
+{
+  \arrowsize=0.4pt
+  \advance\arrowsize by.275\pgflinewidth%
+  \pgfsetdash{}{+0pt}
+  \pgfsetroundjoin
+  \pgfpathmoveto{\pgfqpoint{8\arrowsize}{4\arrowsize}}
+  \pgfpathlineto{\pgfqpoint{0\arrowsize}{4\arrowsize}}
+  \pgfpathlineto{\pgfqpoint{0\arrowsize}{-4\arrowsize}}
+  \pgfpathlineto{\pgfqpoint{8\arrowsize}{-4\arrowsize}}
+  \pgfpathclose
+  \pgfusepathqstroke
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% A circle and diamond shape
+\makeatletter
+\newdimen\tempa
+\newdimen\tempb
+\pgfdeclareshape{diamond in circle}{
+\inheritsavedanchors[from=diamond] % this is a diamond
+\inheritsavedanchors[from=circle] % this is a circle
+\inheritanchorborder[from=circle]
+\inheritanchor[from=circle]{center}
+\inheritanchor[from=circle]{radius}
+\inheritanchor[from=circle]{north}
+\inheritanchor[from=circle]{south}
+\inheritanchor[from=circle]{east}
+\inheritanchor[from=circle]{west}
+\inheritanchor[from=circle]{anchorborder}
+  \saveddimen\radius{%
+    %
+    % Caculate ``height radius''
+    %
+    \pgf@ya=.5\ht\pgfnodeparttextbox%
+    \advance\pgf@ya by.5\dp\pgfnodeparttextbox%
+    \pgfmathsetlength\pgf@yb{\pgfkeysvalueof{/pgf/inner ysep}}%
+    \advance\pgf@ya by\pgf@yb%
+    %
+    % Caculate ``width radius''
+    %
+    \pgf@xa=.5\wd\pgfnodeparttextbox%
+    \pgfmathsetlength\pgf@xb{\pgfkeysvalueof{/pgf/inner xsep}}%
+    \advance\pgf@xa by\pgf@xb%
+    %
+    % Calculate length of radius vector:
+    %
+    \pgf@process{\pgfpointnormalised{\pgfqpoint{\pgf@xa}{\pgf@ya}}}%
+    \ifdim\pgf@x>\pgf@y%
+        \c@pgf@counta=\pgf@x%
+        \ifnum\c@pgf@counta=0\relax%
+        \else%
+          \divide\c@pgf@counta by 255\relax%
+          \pgf@xa=16\pgf@xa\relax%
+          \divide\pgf@xa by\c@pgf@counta%
+          \pgf@xa=16\pgf@xa\relax%
+        \fi%
+      \else%
+        \c@pgf@counta=\pgf@y%
+        \ifnum\c@pgf@counta=0\relax%
+        \else%
+          \divide\c@pgf@counta by 255\relax%
+          \pgf@ya=16\pgf@ya\relax%
+          \divide\pgf@ya by\c@pgf@counta%
+          \pgf@xa=16\pgf@ya\relax%
+        \fi%
+    \fi%
+    \pgf@x=\pgf@xa%
+    %
+    % If necessary, adjust radius so that the size requirements are
+    % met:
+    %
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/minimum width}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/minimum height}}%
+    \ifdim\pgf@x<.5\pgf@xb%
+        \pgf@x=.5\pgf@xb%
+    \fi%
+    \ifdim\pgf@x<.5\pgf@yb%
+        \pgf@x=.5\pgf@yb%
+    \fi%
+    %
+    % Now, add larger of outer sepearations.
+    %
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/outer xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/outer ysep}}%
+    \ifdim\pgf@xb<\pgf@yb%
+      \advance\pgf@x by\pgf@yb%
+    \else%
+      \advance\pgf@x by\pgf@xb%
+    \fi%
+  }
+\backgroundpath{
+    \tempa=\radius
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/outer xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/outer ysep}}%
+    \ifdim\pgf@xb<\pgf@yb%
+      \advance\tempa by-\pgf@yb%
+    \else%
+      \advance\tempa by-\pgf@xb%
+    \fi%
+    \pgfpathmoveto{\centerpoint\advance\pgf@x by\radius}%
+    \pgfpathlineto{\centerpoint\advance\pgf@y by\radius}%
+    \pgfpathlineto{\centerpoint\advance\pgf@x by-\radius}%
+    \pgfpathlineto{\centerpoint\advance\pgf@y by-\radius}%
+    \pgfpathclose%
+  }
+\behindbackgroundpath{
+    \tempa=\radius%
+    \pgfmathsetlength{\pgf@xb}{\pgfkeysvalueof{/pgf/outer xsep}}%
+    \pgfmathsetlength{\pgf@yb}{\pgfkeysvalueof{/pgf/outer ysep}}%
+    \ifdim\pgf@xb<\pgf@yb%
+      \advance\tempa by-\pgf@yb%
+    \else%
+      \advance\tempa by-\pgf@xb%
+    \fi%
+    \pgfpathcircle{\centerpoint}{\tempa}%
+  }
+}
+\makeatother
+
+
+\newcommand{\parameter}[1]{$\langle\mbox{#1}\rangle$}
+\usepackage{enumitem}
+\setlength{\parindent}{12pt}
+\renewcommand{\theenumi}{\textbf{\Alph{enumi}}}
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=2pt] (char) {#1};}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{Ampliación de Sistemas Operativos y Redes}
+\author{Resumen de la asignatura.}
+\date{Curso 2018/19}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+\maketitle
+\tableofcontents
+\input{redes.tex}
+\input{so.tex}
+
+\end{document}
