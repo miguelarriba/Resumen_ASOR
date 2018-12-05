@@ -70,6 +70,8 @@ int pipe(int fd[2]);
 \begin{lstlisting}[language=C++]
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 int main(){
     int fd[2], rc, pid;

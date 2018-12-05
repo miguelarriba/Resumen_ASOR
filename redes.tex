@@ -320,73 +320,156 @@ La fase de finalización puede realizarse de dos maneras:
 \end{figure}
 \newpage
 \subsection{Ventana deslizante}
-\subsection{Control de errores}
-\subsubsection{Confirmaciones}
-Uno de los métodos para el control de errores son las confirmaciones, que siguen las siguientes reglas.
+TCP consigue transferencia fiable mediante el uso de la \textbf{ventana deslizante}.
+\subsubsection{Parada y Espera vs. Ventana Deslizante}
+En los protocolos de \textbf{parada y espera}, cuando el emisor envía un segmento, tiene que esperar a recibir un ACK antes de poder enviar el siguiente segmento.\\
+
+Si después del timeout no llega el ACK, el emisor vuelve a enviar el segmento. Esto implica que un transmisor solo puede tener un elemento pendiente de reconocimiento, lo cual es bastante ineficiente.\\
+
+Los protocolos de \textbf{ventana deslizante} por el contrario, pueden enviar varios segmentos sin esperar a recibir las confirmaciones de una en una.\\
+
+La ventana deslizante permite:
 \begin{itemize}
-    \item Son acumulativas y se pueden enviar con otros segmentos 
-    \item Las confirmaciones no se pueden retrasar más de 500ms.
-    \item No puede haber más de dos segmentos sin confirmar.
-    \item Los segmentos fuera de orden que provocan huecos deben confirmarse inmediatamente.
-    \item Los segmentos que completan huecos deben confirmarse inmediatamente.
-    \item Los segmentos duplicados se confirman para prevenir perdidas ACK.
-    
+    \item La recepción de segmentos duplicados.
+    \item La retransmisión de segmentos erróneos o perdidos.
+    \item La recepción de segmentos fuera de orden.
 \end{itemize}
-\subsubsection{Transmisión sin errores}
-\subsubsection{Recepción fuera de orden}
-\subsubsection{Retransmisión}
-¿Qué hacer cuando se pierde un segmento, o se recibe erróneamente?, para ello TCP tiene dos mecanismos:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/ventanasTCP.jpg}
+    \caption{Intercambio de paquetes mediante ventana deslizante.}
+\end{figure}
+\subsubsection{Emisor}
 \begin{itemize}
-    \item Temporizador de retransmisión: si el emisor tiene segmentos sin confirmar, el los reenvía al finalizar el temporizador. Si hay varios segmentos sin confirmar, el emisor reenvía el primero de la ventana.
-    \item Retransmisión rápida ... 
+    \item Almacena los elementos pendientes de reconocimiento [marcados en rojo en el ejemplo]. El límite inferior de la ventana indica el primer segmento sin confirmar (si lo hay), o el siguiente segmento a enviar (si todos los segmentos están confirmados).
+    \item Almacena también los elementos que pueden ser enviados [marcados en amarillo].
+    \item El tamaño de la ventana siempre es igual al tamaño máximo [7 en el ejemplo]. Excepto cuando la aplicación no tiene tantos datos para enviar, en cuyo caso es menor.
+\end{itemize}
+\subsubsection{Receptor}
+\begin{itemize}
+    \item Almacena los elementos pendientes de ser consumidos por la aplicación [marcados en rojo en el ejemplo]. El límite inferior de la ventana indica el primer segmento sin ser consumido (si lo hay), o el siguiente segmento a recibir (si todos los segmentos están consumidos).
+    \item Almacena también los elementos que pueden ser recibidos [marcados en amarillo].
+    \item El tamaño de la ventana siempre es igual al tamaño máximo [7 en el ejemplo]. Excepto cuando la aplicación no tiene tantos datos para recibir, en cuyo caso es menor.
+    \item Una vez los segmento son recibidos, el receptor envía un ACK, cuyo número indica el siguiente segmento a recibir.
+    \item Para enviar los ACK se utiliza la técnica de \textbf{Piggybacking}, que consiste en incluir el ACK en otro segmento de datos que el receptor quiera enviar al emisor (ya que la comunicación es bidireccional).
+\end{itemize}
+\newpage
+\subsection{Control de errores}
+Vamos a ver cómo TCP resuelve algunas situaciones conflictivas.
+\subsubsection{Recepción fuera de orden}
+TCP controla la recepción de datos fuera de orden mediante confirmaciones (ACK) de la siguiente forma.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{img/TCPooo.png}
+    \caption{Recepción fuera de orden.}
+\end{figure}
+\begin{itemize}
+    \item Si hay huecos, el receptor envía el ACK del primer hueco que tenga en el buffer.
+    \item Si no hay huecos envía el ACK del siguiente segmento esperado.
+    \item Los segmentos duplicados se confirman para prevenir pérdidas de ACK.
 \end{itemize}
 \subsubsection{Pérdida de un segmento}
+¿Qué hacer cuando se pierde un segmento, o se recibe erróneamente? para ello TCP tiene dos \textbf{mecanismos de retransmisión}:
+\begin{itemize}
+    \item \textbf{Temporizador de retransmisión:} si el emisor tiene segmentos sin confirmar, los reenvía al finalizar el temporizador. Si hay varios segmentos sin confirmar, el emisor reenvía el primero de la ventana.
+        \begin{figure}[H]\centering
+        \includegraphics[width=\textwidth]{img/TCPTdRet.png}
+        \caption{Temporizador de retransmisión.}\end{figure}
+    \item \textbf{Retransmisión rápida:} si se reciben tres ACKs duplicados, el emisor reenvía el paquete.
+        \begin{figure}[H] \centering
+        \includegraphics[width=\textwidth]{img/TCPRetRap.png}
+        \caption{Retransmisión rápida.}\end{figure}
+\end{itemize}
+\newpage
 \subsubsection{Pérdida de un ACK}
+Con respecto a la pérdida de ACKs se pueden dar dos situaciones.
+\begin{itemize}
+    \item \textbf{No expira el temporizador de retransmisión:} el emisor sigue enviando paquetes, por lo que si el siguiente ACK confirma un segmento posterior, también confirma todos los anteriores.
+        \begin{figure}[H]\centering
+        \includegraphics[width=\textwidth]{img/TCPACK1.png}
+        \caption{No expira el temporizador de retransmisión.}\end{figure}
+    \item \textbf{Expira el temporizador de retransmisión:} si el emisor no sigue enviando paquetes, cuando su temporizador de retransmisión expire, reenviará el paquete sin confirmar.
+        \begin{figure}[H] \centering
+        \includegraphics[width=\textwidth]{img/TCPACK2.png}
+        \caption{Expira el temporizador de retransmisión.}\end{figure}
+\end{itemize}
+
+
+\newpage
 \subsection{Temporizadores TCP}
-A parte del temporizador de retransmisión, TCP utiliza otros tres temporizadores.
+TCP utiliza 4 temporizadores.
 \begin{itemize}
-    \item Keepalive.
-    \item TIMEWAIT.
-    \item Temporizador de persistencia.
+    \item \textbf{Keepalive: }se utiliza para comprobar si un enlace está o no operativo. Cuando el temporizador expira (más de 2 horas, normalmente) envía una serie de señales \textit{keepalive}. Si no recive los ACK correspondientes, cierra la conexión.
+    \item \textbf{TIMEWAIT: }en el cierre de conexión es el tiempo que espera la máquina que ha iniciado el cierre después de recibir el FIN (tanto en 3 como en 4 vías), para dar tiempo a la otra máquina a recibir el último ACK.
+    \begin{figure}[H] \centering
+    \includegraphics[width=0.5\textwidth]{img/TCP_TIMEWAIT.png}\end{figure}
+    \item \textbf{Temporizador de persistencia: \label{tempers}}cuando el receptor advierte de un tamaño de ventana igual a 0, el emisor deja de enviar datos e inicia el temporizador de persistencia. El temporizador de persistencia se usa para proteger a TCP de una situación de interbloqueo que podría surgir si se pierde una actualización del tamaño de la ventana del receptor, y el emisor no puede enviar más datos hasta que reciba una nueva actualización del tamaño de la ventana del receptor. Cuando el temporizador expira, el emisor envía un pequeño paquete esperando un ACK, que le indique el nuevo tamaño de ventana.
+    \item \textbf{Temporizador de retransmisión: }se utiliza cuando se espera un ACK del otro extremo. Veámoslo con más detalle.
 \end{itemize}
-\subsubsection{Temporizador de retransmisión:}
-Se establece en función del tráfico de la red, hay varios algoritmos para establecerlo.
-Se basa en el tiempo de ida y vuelta (RTT).
-- RTTm: RTT medido
-- RTTs: RTT suavizado
-- RTTd: RTT desviación
+\newpage
+\begin{tcolorbox}[
+title=Temporizador de retransmisión (TIMEOUT),
+colback=cyan!5!white,
+colframe=cyan!75!black,
+fonttitle=\bfseries]
+El tiempo de TIMEOUT se establece dinámicamente en función del tráfico de la red, y se pueden usar 3 algoritmos distintos para establecerlo.\\
 
-
----
-Algoritmos:
+El tiempo de ida y vuelta (\textbf{RTT}), es el tiempo transcurrido desde que se envía el
+segmento hasta que se recibe el ACK. El RTT puede presentarse de tres formas distintas:
 \begin{itemize}
-    \item Jacobson; Utiliza el RTTs
-    \item Jacobson/Karels: Mejora el anterior
-    \item Karn: se basa en el anterior pero no tiene en cuenta los elementos retransmitidos....
+    \item \textbf{RTT medido (RTTm): }es el RTT tal cual, por lo que puede experimentar grandes fluctuaciones. Por ejemplo si recibe un ACK acumulado, el RTTm se disparará.
+    \item \textbf{RTT suavizado (RTTs): }es la media ponderada entre el RTTm y el último RTTS calculado. De forma que el primer RTTs = RTTm, y los siguientes valores dependen del RTTm actual y del RTTs anterior.
+    \item \textbf{RTT desviación (RTTd): }Considera la variación del tiempo de ida y vuelta, y se calcula a partir del RTTm y del RTTs.
 \end{itemize}
-Ver los ejemplos
 
+En éstos valores se basan los 3 \textbf{algoritmos} que puede usar el temporizador de retransmisión.
+\begin{itemize}
+    \item \textbf{Jacobson: }utiliza únicamente RTTs.
+    \item \textbf{Jacobson/Karels: }mejora el anterior combinando RTTS y RTTD.
+    \item \textbf{Karn: }se basa en el anterior se basa solo en ACKs de segmentos que fueron enviados solo una vez.
+\end{itemize}
+\end{tcolorbox}
 \subsection{Control de flujo}
-\subsubsection{Síndrome de la ventana tonta}
-Ocurre cunado o bien el servidor genera datos a un ritmo muy lento, o bien el cliente consume los datos a un ritmo muy lento.
-\begin{itemize}
-    \item Para evitar la ventana trivial en el emisor se inventó el algoritmo de Nagle:
-    - Se envía el primer mensaje
-    - Se espera a enviar los siguientes hasta:
-            - se recibe un ack del receptor
-            - se acumulan x bytes
-            - expira el temporizador RTO
-    \item Para evitar la ventana trivial en el receptor se inventó el algoritmo de Clark:
-    - Se anuncia tamaño de ventana 0 hasta que:
-            - Se puede recibir un segmento completo
-            - Se ha liberado la mitad del buffer de recepción
-\end{itemize}
-\subsubsection{Control de la congestión}
-Control de flujo: ajustar la velocidad de retransmisión a la velocidad de recepción (entre emisor y receptor).
-Control de congestión: Puede aparecer en cualquier punto de la red. Si un router no es capaz de gestionar todos los paquetes, empieza a descartar. El emisor es el que debe controlar las situaciones de congestión en la red. Normalmente lo detecta con la pérdida de datos.
-El emisor controla el ritmo de envío según el ritmo al que recibe las confirmaciones, para ello utiliza la Ventana de congestión (CW). En una situación ideal la ventana de recepción y la ventana de congestión tienen el mismo tamaño.
+El control de flujo se utiliza para evitar desbordar el buffer del receptor cuando transmitimos muy rápido demasiados datos. Para ello TCP adaptará dinámicamente la ventana del emisor, dependiendo del tamaño de la ventana del receptor (anunciado cada ACK).\\
 
-Fases del control de la congestión:
+Si el receptor se queda sin espacio, su ventana tendrá tamaño = 0, y el emisor dejará de enviar datos. El emisor volverá a enviar datos de nuevo cuando el tamaño de la ventana del receptor vuelva a ser mayor que 0. Para saber el tamaño, utiliza el \underline{\hyperref[tempers]{temporizador de persistencia.}}
+
+\newpage
+\subsubsection{Síndrome de la ventana tonta}
+Ocurre cunado o bien el servidor genera datos a un ritmo muy lento, o bien el cliente consume los datos a un ritmo muy lento.\\
+\begin{tcolorbox}[colback=white]
+Para evitar la ventana tonta en el \textbf{emisor} se inventó el \textbf{algoritmo de Nagle}:
+\begin{itemize}
+    \item Se envía el primer mensaje.
+    \item Se espera a enviar los siguientes hasta que:
+    \begin{enumerate}
+        \item se recibe un ACK del receptor.
+        \item se acumulan x bytes.
+        \item expira el TIMEOUT.
+    \end{enumerate}
+\end{itemize}
+\end{tcolorbox}
+\begin{tcolorbox}[colback=white]
+Para evitar la ventana tonta en el \textbf{receptor} se inventó el \textbf{algoritmo de Clark}:
+\begin{itemize}
+    \item Se anuncia tamaño de ventana 0 hasta que:
+    \begin{enumerate}
+        \item Se puede recibir un segmento completo.
+        \item Se ha liberado la mitad del buffer de recepción.
+    \end{enumerate}
+\end{itemize}
+\end{tcolorbox}
+
+
+\subsection{Control de la congestión}
+A diferencia del control de flujo, el \textbf{control de congestión} puede aparecer en cualquier punto de la red. Si un router no es capaz de gestionar todos los paquetes, empieza a descartar.\\
+
+%TODO: revisar
+El emisor controla el ritmo de envío según el ritmo al que recibe las confirmaciones, para ello utiliza la Ventana de congestión (CW).\\
+
+En una situación ideal la ventana de recepción y la ventana de congestión tienen el mismo tamaño.\\
+
+\subsubsection{Fases del control de la congestión}
 \begin{itemize}
     \item La transmisión comienza con CW = 1
     \item Fase de arranque lento: el tamaño aumenta exponencialmente con cada segmento enviado hasta llegar a un umbral (SST).
