@@ -438,7 +438,7 @@ Si el receptor se queda sin espacio, su ventana tendrá tamaño = 0, y el emisor
 \subsubsection{Síndrome de la ventana tonta}
 Ocurre cunado o bien el servidor genera datos a un ritmo muy lento, o bien el cliente consume los datos a un ritmo muy lento.\\
 \begin{tcolorbox}[colback=white]
-Para evitar la ventana tonta en el \textbf{emisor} se inventó el \textbf{algoritmo de Nagle}:
+Para evitar la ventana tonta en el \textbf{emisor}, se inventó el \textbf{algoritmo de Nagle}:
 \begin{itemize}
     \item Se envía el primer mensaje.
     \item Se espera a enviar los siguientes hasta que:
@@ -450,7 +450,7 @@ Para evitar la ventana tonta en el \textbf{emisor} se inventó el \textbf{algori
 \end{itemize}
 \end{tcolorbox}
 \begin{tcolorbox}[colback=white]
-Para evitar la ventana tonta en el \textbf{receptor} se inventó el \textbf{algoritmo de Clark}:
+Para evitar la ventana tonta en el \textbf{receptor}, se inventó el \textbf{algoritmo de Clark}:
 \begin{itemize}
     \item Se anuncia tamaño de ventana 0 hasta que:
     \begin{enumerate}
@@ -462,26 +462,60 @@ Para evitar la ventana tonta en el \textbf{receptor} se inventó el \textbf{algo
 
 
 \subsection{Control de la congestión}
-A diferencia del control de flujo, el \textbf{control de congestión} puede aparecer en cualquier punto de la red. Si un router no es capaz de gestionar todos los paquetes, empieza a descartar.\\
+Cuando se pierde paquetes en Internet, la mayoría de las veces se debe a un problema de congestión en algún punto de la red: puede ocurrir que el router no pueda procesar paquetes al ritmo al que los recibe. Entonces, empieza a descartar paquetes.\\
 
-%TODO: revisar
-El emisor controla el ritmo de envío según el ritmo al que recibe las confirmaciones, para ello utiliza la Ventana de congestión (CW).\\
+El control de la congestión y el flujo son dos mecanismos diferentes. El control de flujo se encarga de ajustar la transmisión en el receptor, mientras que el \textbf{control de congestión} puede aparecer en cualquier punto de la red. Si un router no es capaz de gestionar todos los paquetes, empieza a descartar.\\
 
-En una situación ideal la ventana de recepción y la ventana de congestión tienen el mismo tamaño.\\
+El emisor utiliza el ritmo de llegada de confirmaciones para regular el ritmo de
+envío de segmentos de datos. Para ello utiliza la Ventana de congestión \textbf{(CW)}.\\
+
+La ventana de congestión es complementaria a la ventana de recepción \textbf{(RW)} usada para el control de flujo.
+\begin{itemize}
+    \item En una situación de no congestión (sin pérdida o retraso de segmentos) la ventana de congestión alcanza el mismo tamaño que la ventana de recepción \textbf{(CW = RW)}.
+    \item Cuando se produce una situación de congestión el tamaño de \textbf{CW} se va reduciendo progresivamente.
+    \item Cuando la situación de congestión desaparece, el tamaño de CW se va aumentando progresivamente
+    \item El número máximo de bytes que puede enviar el emisor \textbf{(AW, Allowed Window)} es el mínimo de ambos tamaños de ventana:\\
+    \begin{center}
+        $AW = min ( RW, CW )$
+    \end{center}
+\end{itemize}
 
 \subsubsection{Fases del control de la congestión}
+La transmisión comienza con CW = 1.
+\begin{enumerate}
+    \item \textbf{Fase de arranque lento:} el tamaño aumenta exponencialmente con cada segmento enviado hasta llegar a un umbral (SST, Slow Start Threshold). Inicialmente, el valor del SST suele ser de 64 Kbytes.
+    \item \textbf{Fase de evitación de congestión:} Cuando se confirman todos los segmentos de la ventana la CW aumenta en +1 (crecimiento lineal).
+    \item \textbf{Fase constante:} si la CW alcanza el mismo tamaño que la ventana de flujo (RW), el tamaño se mantiene.
+\end{enumerate}
+    \begin{figure}[H] \centering
+    \includegraphics[width=0.8\textwidth]{img/TCP_FasesCong.png}\end{figure}
+    
+\subsubsection{Mecanismos de control de la congestión}
+Durante la conexión pueden aparecer congestiones que se detectan de forma indirecta de dos formas distintas:
 \begin{itemize}
-    \item La transmisión comienza con CW = 1
-    \item Fase de arranque lento: el tamaño aumenta exponencialmente con cada segmento enviado hasta llegar a un umbral (SST).
-    \item Fase de evitación de congestión: Cuando se confirman todos los segmentos de la ventana la CW aumenta en +1 (crecimiento lineal).
-    \item Fase constante: si la CW alcanza el mismo tamaño que la ventana de flujo (RW), el tamaño se mantiene.
+    \item Se reciben \textbf{3 ACKs duplicados}. Esto indica un nivel de congestión leve, ya que sigue habiendo tráfico en la red.\\
+    
+    Ante esta situación se activa el método de recuperación rápida (fast recovery):
+    \begin{enumerate}
+        \item Se divide el valor de CW a la mitad.
+        \item Se ejecuta el método de evitación de colisiones a partir de ese valor de CW.
+    \end{enumerate}
+        \begin{figure}[H] \centering
+        \includegraphics[width=0.8\textwidth]{img/TCP_3acks.png}\end{figure}
+    \item \textbf{Expira el temporizador} de retransmisión. Esto indica un nivel de congestión elevado, ya que se interpreta que el tráfico en la red está interrumpido.
+    En este caso se realizan las siguientes acciones:
+    \begin{enumerate}
+        \item Se inicializa el tamaño de la ventana de congestión a CW = 1.
+        \item Se reduce el umbral de arranque lento (SST), fijándolo a la mitad del valor que tenía la CW antes de producirse el timeout.
+        \item Se ejecuta el método de arranque lento a partir de CW = 1.
+    \end{enumerate}
+        \begin{figure}[H] \centering
+        \includegraphics[width=0.9\textwidth]{img/TCP_congtimeout.png}\end{figure}
 \end{itemize}
-A partir de aqui pueden aparecer congestiones que se detectan de forma indirecta:
-\begin{itemize}
-    \item Se reciben 3 ACKs duplicados. Nivel de congestión leve...
-    \item Expira el temporizador de retransmisión. Nivel de congestión elevado...
-\end{itemize}
+
+
 %%%%%%%%%%%%%% Dia 3 %%%%%%%%%%%%%%
+\newpage
 \section{Servicios de Red: Filtrado de paquetes}
 \subsection{Firewall y filtrado de paquetes}
 Firewall filtra el trafico malicioso o indeseado entre Internet y una red privada.
