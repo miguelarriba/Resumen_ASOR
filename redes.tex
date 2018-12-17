@@ -112,6 +112,7 @@ A parte, existen otras direcciones reservadas:
     \centering
     \includegraphics[width=0.7\textwidth]{img/ARP.png}
 \end{figure}
+\vspace{2cm}
 Un datagrama IP tiene la siguiente forma.
 
 \begin{table}[h] \centering \begin{tabular}{|c|c|}
@@ -122,13 +123,12 @@ A la hora de ser enviado, se encapsula \textbf{dentro del campo de datos} de otr
 \begin{table}[h] \centering \begin{tabular}{|l|c|c|l|l|}
 \hline MAC Destino & MAC Origen & Protocolo & \textbf{Datos} & CRC \\ \hline \end{tabular}
 \end{table}
-
+\vspace{2cm}
 ARP se encarga de encontrar la dirección MAC que corresponde a una determinada dirección IP. Para ello se envía un paquete (ARP request) a la dirección de difusión de la red (broadcast, MAC = FF FF FF FF FF FF) que contiene la dirección IP por la que se pregunta, y se espera a que esa máquina responda (ARP reply) con su dirección MAC.\\
 
 Cada máquiena mantiene una tabla ARP en la que guarda las direcciones IP de las últimas máquinas con las que ha conectado, junto con su dirección MAC.
-
-%ICMP
 \newpage
+%ICMP
 \section{Protocolo ICMP}
 \begin{figure}[H]
     \centering
@@ -178,7 +178,7 @@ Tipo = 0 & Código = 0  & Checksum \\ \hline
 \end{itemize}
 
 %DHCP
-\newpage
+\begin{onepage}
 \section{Protocolo DHCP}
 \begin{figure}[H]
     \centering
@@ -197,6 +197,7 @@ Algunas de sus \textbf{características} son:
     \item Puede proveer de una servidor \textbf{TFTP} al dispositivo cliente. TFTP se utiliza para transferir pequeños archivos entre ordenadores en una red, como imágenes de arranque.
     \item En redes grandes con muchos enlaces, un servidor DHCP es ayudado por \textbf{DHCP relay agents} situados en routers intermedios. Estos agentes retransmiten los mensajes entre cliente y servidor situados en distintas subredes.
 \end{itemize}
+\end{onepage}
 \subsection{Mensajes DHCP}
 Estos son algunas de las operaciones que permite el protocolo.
 \begin{itemize}
@@ -234,7 +235,7 @@ TCP (Transmission Control Protocol) es un protocolo de transporte fiable y orien
 \subsection{Datagrama TCP}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.9\textwidth]{img/TCPformat.png}
+    \includegraphics[width=0.85\textwidth]{img/TCPformat.png}
     \caption{Se divide en dos partes: datos (Data) y cabecera (Resto de campos).}
 \end{figure}
 \begin{itemize}
@@ -258,6 +259,8 @@ secuencia iniciales.
     \item \textbf{Options}: Campo de opciones de longitud variable.
     \item \textbf{Data}: Campo de datos de longitud variable.
 \end{itemize}
+\begin{onepage}
+
 \subsection{Fases de conexión}
 Ya sabemos que TCP es un protocolo orientado a conexión, ahora vamos a ver detenidamente como se comunican dos máquinas.
 \subsubsection{Fase de Establecimiento}
@@ -265,12 +268,15 @@ Ya sabemos que TCP es un protocolo orientado a conexión, ahora vamos a ver dete
     \centering
     \includegraphics[width=0.55\textwidth]{img/SYN3.png}
 \end{figure}
-Una máquina (servidor) abre socket en un determinado puerto TCP y se queda a la escucha de nuevas conexiones (apertura pasiva).\\
+Una máquina (\textbf{servidor}) abre socket en un determinado puerto TCP y se queda a la escucha de nuevas conexiones (apertura pasiva).\\
 
-Otra máquina (cliente) realiza una apertura activa de un puerto enviando un paquete SYN al servidor como parte de la negociación en tres pasos. En el lado del servidor se comprueba si el puerto está abierto, es decir, si existe algún proceso escuchando en ese puerto. En caso de no estarlo, se envía al cliente un paquete de respuesta con el bit RST activado, lo que significa el rechazo del intento de conexión.\\
+Otra máquina (\textbf{cliente}) realiza una apertura activa de un puerto enviando un paquete SYN al servidor como parte de la negociación en tres pasos. En el lado del servidor se comprueba si el puerto está abierto, es decir, si existe algún proceso escuchando en ese puerto.\\
 
-En caso de que sí se encuentre abierto el puerto, el lado servidor respondería a la petición SYN válida con un paquete SYN/ACK. Finalmente, el cliente debería responderle al servidor con un ACK, completando así la negociación en tres pasos (SYN, SYN/ACK y ACK) y la fase de establecimiento de conexión. Es interesante notar que existe un número de secuencia generado por cada lado, ayudando de este modo a que no se puedan establecer conexiones falseadas (spoofing).\\
+En caso de no estarlo, se envía al cliente un paquete de respuesta con el bit RST activado, lo que significa el rechazo del intento de conexión.\\
 
+En caso de que sí se encuentre abierto el puerto, el lado servidor respondería a la petición SYN válida con un paquete SYN/ACK. Finalmente, el cliente debería responderle al servidor con un ACK, completando así la negociación en tres pasos (SYN, SYN/ACK y ACK) y la fase de establecimiento de conexión.\\
+
+Es interesante notar que existe un número de secuencia generado por cada lado, ayudando de este modo a que no se puedan establecer conexiones falseadas (spoofing).\\
 
 \begin{tcolorbox}[
 title=SYN Flood,
@@ -284,7 +290,7 @@ Es una vulnerabilidad en el protocolo que consiste en enviar una gran cantidad d
     \item Retrasar la asignación de recursos usando SYN cookies.
 \end{itemize}
 \end{tcolorbox}
-
+\end{onepage}
 \subsubsection{Fase de Transferencia}
 Durante la etapa de transferencia de datos, una serie de mecanismos claves determinan la fiabilidad y robustez del protocolo. Entre ellos están incluidos el uso del \textbf{número de secuencia} para ordenar los segmentos TCP recibidos y detectar paquetes duplicados, \textbf{checksums} para detectar errores, \textbf{temporizadores} para detectar pérdidas o retrasos y \textbf{ventanas deslizantes} para el control de flujo de datos.
 \subsubsection{Fase de Finalización}
@@ -345,6 +351,7 @@ La ventana deslizante permite:
     \item Almacena también los elementos que pueden ser enviados [marcados en amarillo].
     \item El tamaño de la ventana siempre es igual al tamaño máximo [7 en el ejemplo]. Excepto cuando la aplicación no tiene tantos datos para enviar, en cuyo caso es menor.
 \end{itemize}
+\vspace{2cm}
 \subsubsection{Receptor}
 \begin{itemize}
     \item Almacena los elementos pendientes de ser consumidos por la aplicación [marcados en rojo en el ejemplo]. El límite inferior de la ventana indica el primer segmento sin ser consumido (si lo hay), o el siguiente segmento a recibir (si todos los segmentos están consumidos).
@@ -370,7 +377,7 @@ TCP controla la recepción de datos fuera de orden mediante confirmaciones (ACK)
 \end{itemize}
 \subsubsection{Pérdida de un segmento}
 ¿Qué hacer cuando se pierde un segmento, o se recibe erróneamente? para ello TCP tiene dos \textbf{mecanismos de retransmisión}:
-\begin{itemize}
+\begin{enumerate}
     \item \textbf{Temporizador de retransmisión:} si el emisor tiene segmentos sin confirmar, los reenvía al finalizar el temporizador. Si hay varios segmentos sin confirmar, el emisor reenvía el primero de la ventana.
         \begin{figure}[H]\centering
         \includegraphics[width=\textwidth]{img/TCPTdRet.png}
@@ -379,7 +386,7 @@ TCP controla la recepción de datos fuera de orden mediante confirmaciones (ACK)
         \begin{figure}[H] \centering
         \includegraphics[width=\textwidth]{img/TCPRetRap.png}
         \caption{Retransmisión rápida.}\end{figure}
-\end{itemize}
+\end{enumerate}
 \newpage
 \subsubsection{Pérdida de un ACK}
 Con respecto a la pérdida de ACKs se pueden dar dos situaciones.
@@ -393,9 +400,7 @@ Con respecto a la pérdida de ACKs se pueden dar dos situaciones.
         \includegraphics[width=\textwidth]{img/TCPACK2.png}
         \caption{Expira el temporizador de retransmisión.}\end{figure}
 \end{itemize}
-
-
-\newpage
+\begin{onepage}
 \subsection{Temporizadores TCP}
 TCP utiliza 4 temporizadores.
 \begin{itemize}
@@ -406,7 +411,9 @@ TCP utiliza 4 temporizadores.
     \item \textbf{Temporizador de persistencia: \label{tempers}}cuando el receptor advierte de un tamaño de ventana igual a 0, el emisor deja de enviar datos e inicia el temporizador de persistencia. El temporizador de persistencia se usa para proteger a TCP de una situación de interbloqueo que podría surgir si se pierde una actualización del tamaño de la ventana del receptor, y el emisor no puede enviar más datos hasta que reciba una nueva actualización del tamaño de la ventana del receptor. Cuando el temporizador expira, el emisor envía un pequeño paquete esperando un ACK, que le indique el nuevo tamaño de ventana.
     \item \textbf{Temporizador de retransmisión: }se utiliza cuando se espera un ACK del otro extremo. Veámoslo con más detalle.
 \end{itemize}
-\newpage
+\end{onepage}
+
+\begin{onepage}
 \begin{tcolorbox}[
 title=Temporizador de retransmisión (TIMEOUT),
 colback=cyan!5!white,
@@ -434,7 +441,7 @@ El control de flujo se utiliza para evitar desbordar el buffer del receptor cuan
 
 Si el receptor se queda sin espacio, su ventana tendrá tamaño = 0, y el emisor dejará de enviar datos. El emisor volverá a enviar datos de nuevo cuando el tamaño de la ventana del receptor vuelva a ser mayor que 0. Para saber el tamaño, utiliza el \underline{\hyperref[tempers]{temporizador de persistencia.}}
 
-\newpage
+\end{onepage}
 \subsubsection{Síndrome de la ventana tonta}
 Ocurre cunado o bien el servidor genera datos a un ritmo muy lento, o bien el cliente consume los datos a un ritmo muy lento.\\
 \begin{tcolorbox}[colback=white]
@@ -512,71 +519,117 @@ Durante la conexión pueden aparecer congestiones que se detectan de forma indir
         \begin{figure}[H] \centering
         \includegraphics[width=0.9\textwidth]{img/TCP_congtimeout.png}\end{figure}
 \end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{onepage}
 
 
-%%%%%%%%%%%%%% Dia 3 %%%%%%%%%%%%%%
-\newpage
-\section{Servicios de Red: Filtrado de paquetes}
-\subsection{Firewall y filtrado de paquetes}
-Firewall filtra el trafico malicioso o indeseado entre Internet y una red privada.
-Tipos de Firewall
+\section{Servicios de Red: Filtrado de paquetes.}
+\subsection{Firewall y filtrado de paquetes.}
+Un \textbf{Firewall:} es un dispositivo configurado para permitir, limitar, cifrar o descifrar el tráfico de red en base a un conjunto de normas.
+
+\subsubsection{Tipos de Firewall.}
 \begin{itemize}
-    \item De red
-    \item De Host
-    ---
-    \item Se pueden distinguir en funcion de si tienen o no estado: Pueden determinar si el paquete esta intentando abrir una conexion nueva o pertenece a una ya existente.
-    SPI (Stainfull packet Inspection)...
-    \item En función de la capa: Filtran el trafico en funcion del contenido de las cabeceras de los segmentos de red. Consideran:
-    \begin{itemize}
-        \item Direcciones
-        \item Puertos   
-        \item Tamaño de los datos
-    \end{itemize}
-
-    \item Firewalls de aplicación: consideran informacion no solo de las cabeceras si no de los datos(que normalmente pertenecen a protocolos de aplicación como http). Este tipo de firewalls se dice que realizan DPI (Deep packet inspection).
+    \item \textbf{En función del estado (stateless/stateful): }Si el filtrado se basa únicamente en la cabecera del paquete o además considera el estado de la conexión.
+    \item \textbf{En función de la capa (de red o de aplicación):} consideran informacion no solo de las cabeceras si no de los datos(que normalmente pertenecen a protocolos de aplicación como http). Este tipo de firewalls se dice que realizan DPI (Deep packet inspection).
 \end{itemize}
 
-\subsection{Netfilter/Iptables}
-Netfilter/iptables son las herramientas de filtrado de paquetes de Linux.
-Es a nivel de red y con estado. Netfilter es una herramienta del kernel de Linux proporciona filtrado de paquetes y modificación de paquetes.
-\\
-\textbf{Cadena}: lista ordenada de reglas que se aplican sobre los paquetes en distintos puntos del proceso del paquete.
-Tablas y cadenas predefinidas:
+\subsection{Iptables.}
+\textbf{Netfilter} es una herramienta del kernel de Linux que proporciona filtrado y modificación de paquetes.\\
+
+El componente más popular construido sobre Netfilter es \textbf{iptables}, una herramienta de cortafuegos que permite no solamente filtrar paquetes, sino también realizar traducción de direcciones de red (NAT).\\
+\begin{tcolorbox}[
+colback=yellow!5!white,
+colframe=yellow!75!cyan,
+fonttitle=\bfseries]
+Para tener clara la estructura de iptables, primero debemos entender los siguientes conceptos:
 \begin{itemize}
-    \item Tabla filter: es la tabla por defecto
-        Contiene tres cadenas, que clasifica los paquetes:
+    \item \textbf{Regla: }define qué hacer con un paquete que cumple unas determinadas características. \textit{Por ejemplo descartar los paquetes con una IP destino determinada.}
+    \item \textbf{Cadena: }es una lista ordenada de reglas que se aplican sobre los paquetes en distintos puntos del proceso del paquete.
+    \item \textbf{Tabla: }es un conjunto de cadenas, cada una destinada a diferentes tipos de procesamiento sobre cada paquete.
+\end{itemize}
+\end{tcolorbox}
+\end{onepage}
+
+\begin{onepage}
+
+
+\subsubsection{Tablas predefinidas.}
+\begin{itemize}
+    \item \textbf{Tabla filter: }es la tabla por defecto. Contiene tres cadenas, que clasifican los paquetes:
         \begin{itemize}
             \item INPUT: paquetes recibidos.
             \item OUTPUT: paquetes generados.
             \item FORWARD: paquetes que atraviesan el sistema.
         \end{itemize}
     
-    \item Tabla NAT: Reescribe direcciones y contiene tres cadenas.
+    \item \textbf{Tabla NAT: }reescribe direcciones origen/destino y los puertos de un paquete. Contiene tres cadenas.
             \begin{itemize}
-                \item PREOUTING:
+                \item PREOUTING: se aplica a paquetes de entrada antes de pasar por la tabla de encaminamiento local.
                 \item POSTROUTING: se aplica a paquetes justo antes de ser enviados, modifica la direccion de origen de los paquetes.
                 \item OUTPUT: similar a la cadena homonima de la tabla filter.
             \end{itemize}
-    \item Tabla Mangle: contiene las cinco cadenas anteriores.
-    
+    \item \textbf{Tabla Mangle: }sirve para cambiar algunos campos del paquete. Contiene las cinco cadenas anteriormente descritas.
+    \end{itemize}
     \begin{figure}[H]
         \centering
         \includegraphics[width=0.8\textwidth]{img/GraficoCadenas.PNG}
         \caption{Diagrama de cadenas}
     \end{figure}
+    \end{onepage}
+\subsubsection{Definición de Reglas.}
+    Las reglas se pueden definir según la información del paquete o según el estado de la conexión. Debe incluir la \textbf{cadena} a la que se añade la regla y un \textbf{objetivo} (qué hacer si el paquete coincide).
     
-    Definición de Reglas: las reglas se pueden definir según la información del paquete o según el estado de la conexión. Debe incluir la cadena a la que se añade la regla y un objetivo.
+    \begin{table}[H]\centering\begin{tabular}{|l|l|}\hline
+    \multicolumn{2}{|c|}{\cellcolor[HTML]{000000}{\color[HTML]{FFFFFF} \textbf{Política por defecto}}} \\ \hline
+    -P INPUT & \multirow{3}{*}{Política por defecto} \\ \cline{1-1}
+    -P OUTPUT &  \\ \cline{1-1}
+    -P FORWARD &  \\ \hline
+    \end{tabular}\end{table}
+    
+    \begin{table}[H]\centering\begin{tabular}{|l|l|}\hline
+    \multicolumn{2}{|c|}{\cellcolor[HTML]{000000}{\color[HTML]{FFFFFF} \textbf{Cadena}}} \\ \hline
+    -A INPUT & Añade regla a cadena de entrada \\ \hline
+    -A OUTPUT & Añade regla a cadena de salida \\ \hline
+    -A FORWARD & Añade regla a la cadena forward (sólo en caso de routers) \\ \hline
+    \end{tabular}\end{table}
+
+    \begin{table}[H]\centering\begin{tabular}{|l|l|}\hline
+    \multicolumn{2}{|c|}{\cellcolor[HTML]{000000}{\color[HTML]{FFFFFF} \textbf{Objetivo}}} \\ \hline
+    -j DROP &  \\ \hline
+    -j ACCEPT &  \\ \hline
+    -j REJECT & igual que DROP pero envía un ICMP de un tipo que puede definirse \\ \hline
+    -j LOG &  \\ \hline
+    \end{tabular}\end{table}  
+    
+    \begin{table}[H]\centering\begin{tabular}{|c|}\hline
+    \rowcolor[HTML]{000000}  {\color[HTML]{FFFFFF} \textbf{Opciones}} \\ \hline
+    Consultar el manual de iptables \\ \hline
+    \end{tabular}\end{table}
+    
     \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{img/EjemplosReglas.PNG}
         \caption{Ejemplos de reglas}
     \end{figure}
-    \subsubsection{NAT}
-    NAT: Network Address Translation: permite dar acceso a Internet a máquinas en redes privadas realizando traducciones. Para ello se utiliza Masquerading: traduce la dirección privada a la dirección pública asignada al router. Para los mensajes entrantes el router tiene una tabla con unas traducciones que depende del \textbf{número de puerto} asignado con el router.
     
-    Port forwarding, servidores virtuales: hace una traduccion de direcciones de red destino. Todos los servidores utilizan la misma ip publica (La del router), la diferencia con el anterior caso el que la tabla se define previamente y no de forma dinámica.
-\end{itemize}
-
+\begin{onepage}
+    \subsubsection{NAT}
+    \textbf{NAT: Network Address Translation:} permite dar acceso a Internet a máquinas en redes privadas realizando traducciones.\\
+    
+    NAT almacena una \textbf{tabla} que relaciona las direcciones privadas con las direcciones públicas.\\
+    
+    Existen los siguientes modos de funcionamiento:
+    \begin{itemize}
+        \item \textbf{Estáticas: }consiste en una asignación fija de N direcciones privadas a N direcciones públicas.
+        \item \textbf{Dinámicas: }consiste en una asignación de N direcciones privadas a M direcciones públicas, donde $(M < N)$. Por tanto las N direcciones privadas se disputan las M direcciones públicas.
+        \item \textbf{Sobrecarga o NAPT: }asigna N direcciones privadas a 1 dirección pública.
+        \begin{figure}[H]\centering\includegraphics[width=0.7\textwidth]{img/NAT.png}\end{figure}
+        \begin{itemize}
+            \item Para paquetes de salida se utiliza la técnica de \textbf{Masquerading}: traduce la dirección privada a la dirección pública asignada al router. 
+            \item Para los paquetes entrantes se utiliza la técnica de \textbf{Port forwarding, o servidores virtuales}, el router tiene una tabla con unas traducciones que depende del \textbf{número de puerto} asignado con el router.
+        \end{itemize}
+    \end{itemize}
+\end{onepage}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{DNS}
 Realiza y recibe consultas sobre nombres de dominio y las resuelve. La implementación más usada es BIND, que es open source. Define un espacio de nombres para direcciones de dominio y para direcciones IP. (resolver el nombre de dominio asociado a una IP se llama resolución inversa). Tiene una bbdd distribuída. DNS tambien define un protocolo de red.

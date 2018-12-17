@@ -248,6 +248,18 @@
   }
 }
 \makeatother
+%%%%%%%%%%%%%%%%%%%%% OnePage %%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\addstretch}[1]{\addtolength{#1}{\fill}}
+\newenvironment{onepage}
+  {\newpage\flushbottom
+   \addstretch{\baselineskip}
+   \addstretch{\abovedisplayskip}
+   \addstretch{\abovedisplayshortskip}
+   \addstretch{\belowdisplayskip}
+   \addstretch{\belowdisplayshortskip}
+   \setlength{\parskip}{0pt}}
+  {\newpage}
+%%%%%%%%%%%%%%%%%%%%% OnePage %%%%%%%%%%%%%%%%%%%%%%%
 
 
 \newcommand{\parameter}[1]{$\langle\mbox{#1}\rangle$}
