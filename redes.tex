@@ -551,8 +551,6 @@ Para tener clara la estructura de iptables, primero debemos entender los siguien
 \end{onepage}
 
 \begin{onepage}
-
-
 \subsubsection{Tablas predefinidas.}
 \begin{itemize}
     \item \textbf{Tabla filter: }es la tabla por defecto. Contiene tres cadenas, que clasifican los paquetes:
@@ -632,33 +630,70 @@ Para tener clara la estructura de iptables, primero debemos entender los siguien
 \end{onepage}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{DNS}
-Realiza y recibe consultas sobre nombres de dominio y las resuelve. La implementación más usada es BIND, que es open source. Define un espacio de nombres para direcciones de dominio y para direcciones IP. (resolver el nombre de dominio asociado a una IP se llama resolución inversa). Tiene una bbdd distribuída. DNS tambien define un protocolo de red.
+\begin{figure}[H]\centering\includegraphics[width=0.7\textwidth]{img/DNS.png}
+\end{figure}
+\textbf{DNS (Domain Name System)}, es un sistema de nomenclatura  para dispositivos conectados a redes IP. Su función más importante es \enquote{traducir} nombres inteligibles para las personas en identificadores binarios asociados con los equipos, con el propósito de poder localizar y direccionar estos equipos mundialmente.\\
 
-Zonas y dominios.
-\\Existen dominios raiz. Y luego subdominios. P.ej: www.ucm.es.
-\\
-\[(root) \rightarrow (es) \rightarrow (ucm)\]
-(es) es un subdominio de primer nivel (ccTLD), que pueden ser generales (com, gov, net..) o de país (fr, es, uk...).
+El servidor DNS utiliza una \textbf{base de datos distribuida} que almacena información asociada a nombres de dominio. DNS también define un protocolo de red.
 
-Un dominio puede delegar la gestion de sus subdominios por zonas: (la zona (es) delega en la zona ucm, o en la zona google).
-\\
+\subsection{Zonas y dominios.}
+Un nombre de dominio usualmente consiste en dos o más etiquetas, separadas por puntos. \textit{Por ejemplo, www.ucm.es.}
 
-La base de datos se estructura en registros, que pueden ser de distintos tipos.
+\[(root) \rightarrow (es) \rightarrow (ucm)\]\\
+\textit{\enquote{es}} es un subdominio de primer nivel, que pueden ser generales (com, gov, net..) o de país (fr, es, uk...).\\
 
-\subsection{Protocolo DNS}
-Utiliza datagramas UDP, aunque se puede utilizar TCP para algunos casos (como obtener toda la información de un servidor, o si la respuesta tiene más de 512 bytes)
-\\
-...
-Seccion de autoridad (servidores de nombre oficiales de la zona por la que estamos preguntando.)
-...
-16 Flags...
-\\
-Herramienta dig: preguntamos por la IP:\\
-dig @a root-servers.net informatica.ucm.es A.\\
-en la ucm no funciona desde consola y hay que usar una pagina web. https://www.digwebinterface.com/
-Consultas recursivas...\\Para evitar consultas repetitivas, DNS tiene un cache de registros. Las respuestas se cachean durante un TTL, que se establece en funcion de la probabilidad de que ese dato cambie.Los fallos (no existe el dominio o registro), tambien se guardan en caché. El TTL no tiene por que respetarse.
--- Servidores de Nombres ...
--- Base de Datos...
+\textit{\enquote{ucm}} es un subdominio de segundo orden, etc...\\
+
+Una \textbf{zona} DNS es una parte del espacio de nombres que se delega a una entidad legal. Cuando un navegador web necesita encontrar la dirección IP para un nombre de host, realiza una búsqueda de DNS en el servidor DNS que administra la zona para ese nombre de host.\\
+
+Un \textbf{FQDN} (fully qualified domain name) es un nombre que incluye el nombre de la computadora y el nombre de dominio asociado a ese equipo. Por ejemplo, dada la computadora llamada \enquote{serv1} y el nombre de dominio \enquote{bar.com.}, el FQDN será \enquote{serv1.bar.com.}
+\newpage
+\subsection{Datagrama DNS}
+\begin{figure}[H]\centering\includegraphics[width=0.7\textwidth]{img/DNS_Datagram.jpg}
+\end{figure}
+\begin{itemize}
+    \item La \textbf{Cabecera} se divide en 6 campos, que permiten identificar el datagrama y determinar su contenido.
+    \item Las secciones \textbf{Pregunta y Respuesta} incluye el nombre de dominio y el tipo de registro por el que se pregunta.
+    \item Sección de \textbf{Autoridad} especifica los servidores de nombre oficiales de la zona por la que estamos preguntando.
+    \item La sección \textbf{Adicional} incluye registros que pueden ser de ayuda (resolver)
+\end{itemize}
+\subsection{Características del protocolo DNS}
+\begin{enumerate}
+    \item La base de datos DNS se estructura en \textbf{registros}, que son la información básica que se intercambia y cachea en los servidores. DNS gestiona diferentes tipos de registros para almacenar servidores de nombres, asignaciones nombre-IP, etc...
+    \item \textbf{BIND} es la implementación DNS más usada y es Open Source.
+    \item Los datagramas DNS se encapsulan en \textbf{datagramas UDP}, aunque se puede utilizar TCP en algunos casos (como obtener toda la información de un servidor, o si la respuesta tiene más de 512 bytes)\\
+    
+    \item Ante una consulta DNS, se busca en primer lugar si dispone de la respuesta en la memoria caché. En caso contrario, se inicia la búsqueda de manera recursiva. Una vez encontrada la respuesta, el servidor DNS guardará el resultado en su memoria caché para futuros usos y devuelve el resultado.
+    \begin{figure}[H]\centering\includegraphics[width=\textwidth]{img/DNS_Busqueda.png}\end{figure}
+    \item \textbf{Cachear} la resolución de direcciones mejora notablemente la eficiencia. La relación nombre-IP es prácticamente estática, por lo que las respuestas se cachean durante TTL (“time-to-live”) que varía según el nivel al que se encuentren, por ejemplo:
+    \begin{itemize}
+        \item Servidores de la zona \enquote{.es}, 2 días.
+        \item Servidores del dominio \enquote{rediris.es}, 1 día.
+        \item IP de \enquote{www.rediris.es}, 2 horas.
+    \end{itemize}
+    \item Existen los siguientes \textbf{Tipos de servidores:}
+    \begin{itemize}
+        \item \textbf{Autoritativos: }Representan oficialmente a la zona.
+        \begin{itemize}
+            \item Primarios o maestros: tienen la copia oficial en disco de la BD.
+            \item Secundarios o esclavos: obtienen la BD de los primarios (zone transfer).
+        \end{itemize}
+        \item \textbf{De cache: }Guardan los resultados de las búsquedas realizadas. No tienen ningún registro DNS propio, ni son autoritativos para ninguna zona.
+        \item \textbf{No recursivos: }cuando no disponen el registro de la consulta devuelven una referencia al servidor de nombres que puede tenerlo. Los servidores autoritativos suelen ser no recursivos.
+        \item \textbf{Recursivos: }resuelven cada referencia hasta devolver la respuesta al cliente. En la configuración de los clientes deben usarse servidores recursivos.
+    \end{itemize}
+    \item La \textbf{base de datos DNS} consiste en archivos de texto  mantenidos en el servidor primario de la zona. La base de datos se compone de los siguientes registros:
+    \begin{itemize}
+        \item \textbf{SOA: }marca el comienzo de definición de una zona.
+        \item \textbf{NS: }especifica los servidores autoritativos para la zona e incluye los servidores de nombres de los subdominios delegados a otras organizaciones.
+        \item \textbf{A: }El registro Address (A para IPv4 y AAAA para IPv6) es la base de DNS. Incluye la traducción directa (nombre $\rightarrow$ IP)
+        \item \textbf{PTR: }El registros Pointer contiene la traducción inversa (IP $\rightarrow$ nombre)
+        \item \textbf{MX: }es usado por los sistemas de correo para encaminar los mensajes eficientemente. Permite recibir de forma centralizada el correo de una organización.
+        \item \textbf{CNAME: } permite definir un alias para el nombre canónico. Deben siempre apuntar a un dominio (nunca a una IP).
+    \end{itemize}
+    \item El comando \textbf{dig} se puede usar para realizar consultas DNS.
+\end{enumerate}
+\newpage
 %%%%%%%%%%%
 \section{IPv6}
 IPv6 se crea como respuesta a las limitaciones de IPv4, tales como:
