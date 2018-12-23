@@ -14,8 +14,7 @@ En cambio, el modelo OSI(Open System Interconnection) fue propuesto como una sol
 Hoy en día es el modelo TCP/IP el que realmente se usa.
 \section{Protocolo IPv4}
 \begin{figure}[H]
-    \centering
-    \includegraphics[width=0.7\textwidth]{img/IP.png}
+    \centering \includegraphics[width=0.7\textwidth]{img/IP.png}
 \end{figure}
 IP (Internet Protocol) es un protocolo de comunicación de datos digitales que transfiere paquetes a través de distintas redes físicas. Sus funciones básicas son:
 \begin{itemize}
@@ -693,54 +692,137 @@ Un \textbf{FQDN} (fully qualified domain name) es un nombre que incluye el nombr
     \end{itemize}
     \item El comando \textbf{dig} se puede usar para realizar consultas DNS.
 \end{enumerate}
-\newpage
 %%%%%%%%%%%
+\begin{onepage}
 \section{IPv6}
-IPv6 se crea como respuesta a las limitaciones de IPv4, tales como:
+\begin{figure}[H]
+    \centering \includegraphics[width=0.7\textwidth]{img/IP.png}
+\end{figure}
+IPv6 es una versión del protocolo IP, creada como respuesta a las limitaciones de IPv4. Algunas de éstas limitaciones son:
 \begin{itemize}
-    \item Agotamiento de direcciones.
-    \item El formato de la cabecera es complejo.
-    \item Tiene problemas de seguridad.
+    \item El agotamiento de direcciones.
+    \item El formato complejo de la cabecera.
+    \item Problemas de seguridad.
 \end{itemize}
-Estos problemas se han ido solucionando con parches durante los últimos años. Por ejemplo se ha adaptado la seguridad de IPv6 a IPv4.
-\\
-Frente a esto IPv6 tiene algunas ventajas como:
+A pesar de que IPv6 es usable desde hace años, a día de hoy IPv4 es el protocolo dominante en internet. Por ello, éstas limitaciones se han ido solucionando con parches durante los últimos años. \textit{Por ejemplo se ha adaptado la seguridad de IPv6 a IPv4.}
+\subsection{IPv4 vs IPv6}
+Frente a IPv4, IPv6 presenta algunas ventajas:
 \begin{itemize}
     \item El espacio de direcciones es mucho mayor (128 bits, comparado con los 32 bits de IPv4).
     \item El formato de cabecera se simplifica, con lo que los routers son capaces de procesar más rápido.
     \item No se necesita DHCP, IPv6 es capaz de hacer su trabajo.
     \item IPv6 elimina las direcciones broadcast y las implementa como un caso especial de multicast.
+    \item Proporciona opciones de seguridad tanto para autenticación como para cifrado.
     \item Implementa las direcciones Anycast, que envia el datagrama a la máquina más cercana.
+    \item Da soporte para tráfico en tiempo real. \textit{Por ejemplo: VoIP.}
 \end{itemize}
+\end{onepage}
+\begin{onepage}
 \subsection{Direcciones IPv6}
 
-Entonces IPv6 tiene direcciones Unicast, Multicast y Anycast; vamos a ver cada una de ellas detenidamente.
+\begin{table}[H]\centering\begin{tabular}{|c|c|}\hline\rowcolor[HTML]{FFCC67}
+IPv4 & IPv6 \\ \hline
+Unicast & Unicast \\ \hline
+Multicast & Multicast \\ \hline
+Broadcast & Anycast \\ \hline
+\end{tabular}\end{table}
+Un paquete dirigido a una dirección \textbf{unicast} se entregará únicamente al interfaz identificado con dicha dirección IP.\\
+
+Las direcciones \textbf{multicast} identifican a un grupo de interfaces. Un paquete dirigido a una dirección multicast se entrega a todos los interfaces
+identificados con esa dirección.\\
+
+IPv6 no implementa broadcast, el mismo efecto puede lograrse enviando un paquete al grupo de multicast de enlace-local todos los nodos (all hosts). Por lo tanto, no existe el concepto de una dirección de broadcast y así la dirección más alta de la red (la dirección de broadcast en una red IPv4) es considerada una dirección normal en IPv6.\\
+
+Las direcciones \textbf{anycast} son asignadas del espacio de direcciones unicast. De esta forma, las direcciones anycast no se pueden distinguir sintácticamente de las unicast. Cuando una dirección unicast es asignada a más de una interfaz, esta se convierte en una dirección anycast.
+
+\subsubsection{Notación de direcciones.}
+IPv6 usa la notación \textbf{hexadecimal}.
 \begin{itemize}
-    \item Unicast
-    \item Multicast
-    \item Anycast
-\end{itemize}
-\textbf{Notacion}\\
-IPv6 usa la notación hexadecimal. Como son direcciones muy largas, se usan algunos métodos para comprimirlas.
-\begin{itemize}
+    \item La dirección se divide en 8 grupos de 16 bits.
+    \item Cada grupo se escribe en hexadecimal con 4 dígitos.
+    \item Los grupos se separan por \enquote{:}.
+    \item La longitud del prefijo se denota en CIDR.
+    \item Existen algunos prefijos reservados, por ejemplo para direcciones multicast o ULA.
+    \item Los 64 bits menos significativos determinan el ID del interfaz (distinto del host), que permite relacionar la dirección IP de red con la dirección MAC.
+    \end{itemize}
+    Como se generan direcciones muy largas, se usan algunos métodos para abreviar.
+    \begin{itemize}
     \item Omitir los ceros a la izquierda de cada grupo.
-    \item ::
-
+    \item Las cadenas de ceros seguidos se pueden comprimir con el símbolo \enquote{::}. Aunque este símbolo solo puede aparecer una vez.
 \end{itemize}
-IPv6 utiliza notación CIDR, al igual que IPv4. Ejemplo:\\
-\subsubsection*{Ámbitos y zonas}...\\
+\begin{center}
+    \textit{Ejemplo: }FE80::8:800:200C:741A/64
+\end{center}
+\end{onepage}
+\begin{onepage}
 
-\section*{Estructura de Direcciones}
-\subsection*{Enlace Local}
-\subsection*{ULA}
-\subsection*{Unicast Globales}
-\subsection*{ID de Interfaz}
-\subsection*{Multicast}
-\subsection*{Otras}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Datagrama IPv6
-Protocolo ICMPv6
+%%
+\subsubsection{Direcciones Multicast}
+Una dirección multicast IPv6 es un identificador para un grupo de interfaces (normalmente en diferentes nodos). Una interfaz puede pertenecer a cualquier número de grupos multicast. Las direcciones multicast tienen el siguiente formato:
 
+\begin{figure}[H]
+    \centering \includegraphics[width=\textwidth]{img/IPv6_MULTI.jpg}
+\end{figure}
+
+Las direcciones multicast comienzan con el prefijo \textbf{FF::/8}.
+%%
+\subsubsection{Direcciones públicas y privadas}
+Las direcciones \textbf{Global Unicast} en IPv6 son el equivalente de las direcciones IP públicas en IPv4. Estas direcciones IP pueden ser encaminadas a través de la Internet. Actualmente usan el prefijo \textbf{2000::/3}, que permite $2^{45}$ sitios diferentes.\\
+
+
+De igual modo que IPv4 dispone de direcciones \textbf{reservadas} para uso privado \textit{(Por ejemplo 192.168.x.x)}, IPv6 dispone de \textbf{ULA (Unique Local Addresses)}, que son todas las direcciones que comienzan con el prefijo \textbf{fc00::/7}.
+%%
+\subsubsection{Ámbitos y zonas}
+Las direcciones IPv6 incluyen un \textbf{ámbito}, que indican en qué parte de la red la dirección es \textbf{válida}.\\
+
+Una \textbf{zona} es una región conectada de la red de un ámbito determinado, dentro de la cual se garantiza que todas las direcciones son \textbf{únicas}. Dentro de una zona, los datagramas no se redirigen a una zona distinta, aunque sea del mismo ámbito. Para indicar la zona de una dirección se usa el símbolo \enquote{\%}.
+\begin{center}
+    \textit{Ejemplo: }FE80::1234\%1
+\end{center}
+\end{onepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Datagrama IPv6}
+Un datagrama IPv6 está compuesto principalmente de dos partes: la cabecera y los datos.
+\subsubsection{Cabecera}
+\begin{figure}[H]
+    \centering \includegraphics[width=0.8\textwidth]{img/ipv6_HEADER.png}
+\end{figure}
+\begin{itemize}
+    \item \textbf{Traffic Class: }distingue diferentes requisitos de entrega del datagrama,es similar al campo DS/ToS de IPv4.
+    \item \textbf{Flow Label: }Etiqueta el paquete como perteneciente a un \textbf{flujo} para mejorar el procesamiento realizado por los encaminadores de la red. Un flujo es un conjunto de paquetes que comparte las mismas características (origen/destino, requisitos, etc...).
+    \item \textbf{Payload Length: }longitud sin contar la cabecera (máx. 64 Kbytes).
+    \item \textbf{Hop Limit: }similar al campo TTL de IPv4.
+    \item \textbf{Next Header: }Define la siguiente cabecera en el datagrama (dentro de la sección de datos), puede ser: 
+    \begin{itemize}
+        \item Una cabecera de extensión, similar al campo opciones de IPv4.
+        \item un protocolo de nivel superior, encapsulado en la sección de datos (2=ICMP, 6=TCP, 17=UDP...)
+    \end{itemize}
+    \begin{figure}[H]
+    \centering \includegraphics[width=0.6\textwidth]{img/IPv6_nextHeader.png}
+\end{figure}
+\end{itemize}
+
+%%
+\begin{onepage}
+\subsubsection{Cambios con respecto a IPv6}
+\begin{itemize}
+    \item El campo Header Length se ha eliminado, ya que la longitud es fija.
+    \item No hay campo Checksum, ya que se realiza por los protocolos superiores.
+    \item Los campos de fragmentación se eliminan de la cabecera y se implementan en cabeceras de extensión.
+\end{itemize}
+%%
+\subsubsection{Fragmentación}
+Los routers IPv6 no hacen fragmentación. Los nodos IPv6 requieren ya sea hacer descubrimiento de MTU, realizar fragmentación extremo a extremo o enviar paquetes del tamaño mínimo MTU para IPv6 (1280 bytes).\\
+
+\begin{figure}[H]
+    \centering \includegraphics[width=\textwidth]{img/ipv6_fragm.png}
+\end{figure}
+\end{onepage}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Protocolo ICMPv6}
+ICMPv6 (Internet Control Message Protocol version 6) es una nueva versión de ICMP y una parte importante de la arquitectura IPv6.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Encaminamiento en Internet}
 Al hablar de protocolos: outing protocols are applications that perform network layer management functions. Para simplificar, los consideraremos protocolos de capa de red
