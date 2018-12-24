@@ -694,7 +694,7 @@ Un \textbf{FQDN} (fully qualified domain name) es un nombre que incluye el nombr
 \end{enumerate}
 %%%%%%%%%%%
 \begin{onepage}
-\section{IPv6}
+\section{Protocolo IPv6}
 \begin{figure}[H]
     \centering \includegraphics[width=0.7\textwidth]{img/IP.png}
 \end{figure}
@@ -713,7 +713,7 @@ Frente a IPv4, IPv6 presenta algunas ventajas:
     \item No se necesita DHCP, IPv6 es capaz de hacer su trabajo.
     \item IPv6 elimina las direcciones broadcast y las implementa como un caso especial de multicast.
     \item Proporciona opciones de seguridad tanto para autenticación como para cifrado.
-    \item Implementa las direcciones Anycast, que envia el datagrama a la máquina más cercana.
+    \item Implementa las direcciones Anycast, que envía el datagrama a la máquina más cercana.
     \item Da soporte para tráfico en tiempo real. \textit{Por ejemplo: VoIP.}
 \end{itemize}
 \end{onepage}
@@ -822,7 +822,255 @@ Los routers IPv6 no hacen fragmentación. Los nodos IPv6 requieren ya sea hacer 
 \end{onepage}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Protocolo ICMPv6}
-ICMPv6 (Internet Control Message Protocol version 6) es una nueva versión de ICMP y una parte importante de la arquitectura IPv6.
+\begin{figure}[H]
+    \centering \includegraphics[width=0.7\textwidth]{img/ICMP.png}
+\end{figure}
+ICMPv6 (Internet Control Message Protocol version 6) es una nueva versión de ICMP y una parte importante de la arquitectura IPv6.\\
+
+ICMPv6 asume el papel de los siguientes protocolos auxiliares en IPv4:
+\begin{itemize}
+    \item ICMPv4, protocolo de mensajes de control.
+    \item IGMP, protocolo de gestión de grupos multicast.
+    \item ARP, protocolo de resolución de direcciones.
+\end{itemize}
+Todos los mensajes ICMPv6 tienen un formato común:
+\begin{figure}[H]
+    \centering \includegraphics[width=0.7\textwidth]{img/ICMPv6_format.png}
+\end{figure}
+%%%%%%%%%%%%%%%%%%
+\subsection{Mensajes ICMPv6}
+%%%
+\subsubsection{Mensajes de error}
+Los mensajes de error se pueden producir cuando:
+\begin{itemize}
+    \item El destino es inalcanzable.
+    \item El datagrama es demasiado grande.
+    \item Tiempo excedido.
+    \item Problema de parámetros.
+\end{itemize}
+\begin{onepage}
+%%%
+\subsubsection{Mensajes de información}
+Proporcionan información de diagnóstico, pueden ser:
+\begin{itemize}
+    \item Echo request.
+    \item Echo reply.
+\end{itemize}
+%%%
+\subsubsection{Descubrimiento de vecinos}
+\textbf{Neighbor Discovery (ND)} es un tipo de mensaje equivalente al protocolo Address Resolution Protocol (ARP) en IPv4.\\
+
+Permite que los terminales aprendan las direcciones IPv6 de los vecinos y opera sobre hosts y routers en el mismo enlace.\\
+
+Se pueden realizar las siguientes funciones:
+\begin{itemize}
+    \item \textbf{Descubrimiento de vecino.} Se utilizan dos tipos de mensajes:
+    \begin{enumerate}
+        \item Neighbor Solicitation.
+        Este mensaje se genera para:
+        \begin{itemize}
+            \item Averiguar la dirección física asociada a una dirección IP (como ARP request en IPv4).
+            \item Determinar si un nodo vecino sigue siendo alcanzable.
+            \item Detectar si la dirección IP está duplicada.
+        \end{itemize}
+        \item Neighbor Advertisement.
+        Este mensaje se genera para:
+        \begin{itemize}
+            \item Responder a un mensaje de solicitud de vecino (como ARP reply en IPv4).
+            \item Anunciar un cambio en la dirección física de un interfaz.
+        \end{itemize}
+    \end{enumerate}
+    \item \textbf{Descubrimiento de router.} Se utilizan dos tipos de mensajes:
+    \begin{enumerate}
+        \item Router Solicitation: este mensaje se genera tras la activación de un interfaz, para detectar los encaminadores y realizar la autoconfiguración del interfaz.
+        \item Router Advertisement: los envían los routers para anunciar su presencia en la red. Son enviados de forma periódica y como respuesta a mensajes Router Solicitation.
+    \end{enumerate}
+    \item \textbf{Redirección.} Permite notificar a un host una ruta más adecuada para alcanzar un determinado destino.
+\end{itemize}
+\end{onepage}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Encaminamiento en Internet}
-Al hablar de protocolos: outing protocols are applications that perform network layer management functions. Para simplificar, los consideraremos protocolos de capa de red
+En una red, el encaminamiento consiste en encontrar un camino, desde el origen al destino, a través de nodos de conmutación o routers intermedios. También es necesario decidir cuál es el mejor camino posible (camino más corto) según alguna métrica \textit{(número de nodos, distancia geográfica, retardo, etc...)}.\\
+
+Cuando un encaminador recibe un paquete lo retransmite por el enlace
+adecuado para alcanzar el destino. Esta elección la realiza según:
+
+\begin{itemize}
+    \item \textbf{Tablas de encaminamiento.} Guardan una lista de las direcciones IP y el siguiente salto que tienen asociado.
+    \item \textbf{Etiquetas.} Cada datagrama IP se etiqueta y se conmuta según una etiqueta (campo \enquote{Flow Label} en IPv6). Esto reduce la complejidad de la tabla de encaminamiento.
+\end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Técnicas de Encaminamiento}
+\begin{itemize}
+    \item \textbf{Encaminamiento local: } no tiene en cuenta la topología de la red y usa únicamente información local. Las técnicas más comunes son: Encaminamiento aleatorio, Encaminamiento aislado, e Inundación.
+    \item \textbf{Encaminamiento estático: }Las tablas de encaminamiento se construyen manualmente y no se adaptan a los cambios de la red.
+    \item \textbf{Encaminamiento dinámico: }las tablas de encaminamiento se construyen de forma automática, mediante el intercambio periódico de información entre los encaminadores. Las técnicas más comunes son:
+    \begin{itemize}
+        \item Encaminamiento por \textbf{vector de distancias} \textit{(ejemplo: RIP)}.
+        \item Encaminamiento por \textbf{estado de los enlaces} \textit{(ejemplo: OSPF)}.
+        \item Encaminamiento por \textbf{vector de rutas} \textit{(ejemplo: BGP)}.
+    \end{itemize}
+    \end{itemize}
+    \begin{tcolorbox}[
+    title=Sistemas Autónomos (AS),
+    colback=blue!5!white,
+    colframe=blue!75!black,
+    fonttitle=\bfseries]
+    Un AS es una conjunto de redes y encaminadores gestionados y administrados por una misma autoridad. Se componen de:
+    \begin{itemize}
+        \item \textbf{Routers Internos: }interconectan redes dentro del propio AS. Utilizan \textbf{protocolos internos (IGP)} como RIP o OSPF.
+        \item \textbf{Routers Frontera: }interconectan varios ASs. Utilizan \textbf{protocolos externos (EGP)} como BGP.
+    \end{itemize}
+    \end{tcolorbox}
+\begin{onepage}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \section{Vector de distancias - Protocolo RIP}
+    El \textbf{vector de distancias} es un método de enrutamiento que utiliza el algoritmo de Bellman-Ford para calcular las rutas.
+    %%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Funcionamiento}
+    Imaginemos una red con la siguiente topología:
+    \begin{figure}[H]
+    \centering \includegraphics[width=0.2\textwidth]{img/VectorDeDistanciasEj1.png}
+    \caption{Consta de 4 nodos. El número encima de cada arista indica la distancia del enlace.}
+    \end{figure}
+    Inicialmente los routers sólo conocen sus rutas directas. Vemos como en cuatro unidades de tiempo (T), todos los routers disponen de todas las distancias posibles.
+    \begin{figure}[H]
+    \centering \includegraphics[width=1.1\textwidth]{img/VectorDeDistanciasEj2.png}
+    \caption{El camino más corto está marcado con el color verde, un camino más corto nuevo está indicado en amarillo.}
+    \end{figure}
+    \end{onepage}
+    
+    \begin{onepage}
+    %%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Problemas}
+     El algoritmo Bellman-Ford utilizado en Vector de Distancias no previene de la aparición de bucles. El problema de la \textbf{cuenta a infinito} es que hace que los costes o distancias se incrementen indefinidamente sin que el algoritmo llegue a converger nunca.
+    \begin{figure}[H]
+    \centering \includegraphics[width=0.7\textwidth]{img/CuentaAInfinito.png}
+    \end{figure}
+    \textbf{Soluciones} a la cuenta a infinito:
+    \begin{itemize}
+        \item \textbf{Establecer el infinito a un número pequeño. }\textit{Por ejemplo, en RIP el infinito se establece en 16 saltos.}
+        \item \textbf{Horizonte dividido: }los destinos aprendidos a través de un determinado enlace nunca se difunden a través de dicho enlace. \textit{Ejemplo: El nodo B no enviará al nodo A información sobre el destino X.}
+        \item \textbf{Horizonte dividido con ruta inversa envenenada: }los destinos aprendidos a través de un determinado enlace sí se difunden a través de dicho enlace, pero con distancia infinita. \textit{Ejemplo: El nodo B anunciará al nodo A que el destino X está a distancia infinita.}
+        \item \textbf{Actualizaciones forzadas: }cuando un encaminador detecta una modificación en su tabla de rutas inmediatamente difunde esta información a sus vecinos. De esta forma, los cambios en la topología se propagan de forma rápida a todos los puntos de la red.
+    \end{itemize}
+\end{onepage} 
+
+\begin{onepage}
+    %%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Protocolo RIP}
+    \begin{figure}[H]
+    \centering \includegraphics[width=0.7\textwidth]{img/RIP.png}
+    \end{figure}
+    
+    RIP (Routing Information Protocol), es un protocolo de puerta de enlace interna (Interior Gateway Protocol, IGP) utilizado por los routers para intercambiar información acerca de redes IP. Su algoritmo de encaminamiento está basado en el \textbf{vector de distancia}, ya que calcula la ruta más corta posible a partir del número de saltos.\\
+    
+    %%%%%
+    \subsubsection{Versiones}
+    \begin{itemize}
+        \item RIP versión 1 (1993).
+        \item RIP versión 2 (1998).
+        \item RIPng para IPv6 (1997).
+    \end{itemize}
+    %%%%%
+    \subsubsection{Mensajes}
+    Los mensajes tienen una cabecera con el tipo de mensaje y la versión del protocolo RIP, y un máximo de 25 entradas.\\
+    
+    Las entradas en \textbf{RIPv1} contienen la dirección IP de la red de destino y la métrica. Las entradas en \textbf{RIPv2} incluyen además su máscara y el siguiente encaminador.\\
+    
+    Los mensajes RIP pueden ser de dos tipos:
+    \begin{itemize}
+        \item \textbf{Petición (REQUEST): }enviados por algún encaminador recientemente iniciado que solicita información de los encaminadores vecinos.
+        \item \textbf{Respuesta: (RESPONSE)}mensajes con la actualización de las tablas de encaminamiento. Existen tres tipos:
+        \begin{enumerate}
+            \item Periódicos: Se envían cada 30 segundos. Para indicar que el enlace y la ruta siguen activos. Se envía la tabla de encaminado completa.
+            \item Mensajes enviados como respuesta a mensajes de petición.
+            \item Mensajes enviados cuando cambia algún coste. Se envía toda la tabla de encaminado.
+        \end{enumerate}
+    \end{itemize}
+    \end{onepage}
+    %%%%%%
+    \subsubsection{Temporizadores}
+    RIP utiliza distintos temporizadores:
+    \begin{itemize}
+        \item \textbf{Temporizador periódico: }controla la publicación de los mensajes periódicos. Se debe ajustar el temporizador a 30s.
+        \item \textbf{Temporizador de caducidad: }establece cuanto tiempo puede estar una ruta en la tabla sin ser actualizada.
+        \item \textbf{Temporizador de Recolección de Basura: }controla el tiempo que pasa entre que una ruta es invalidada (o marcada como inalcanzable) y el tiempo que pasa hasta que se elimina la entrada de la tabla de ruteo.
+    \end{itemize}
+
+\begin{onepage}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \section{Estado de los enlaces - Protocolo OSPF}
+    \textbf{Estado de los enlaces} consiste en que un router comunica al resto de nodos de la red cuáles son sus vecinos y a qué distancia está de ellos. Con la información que un nodo de la red recibe de todos los demás, puede construir un \enquote{mapa} de la red, y sobre él calcular los caminos óptimos. El encaminamiento por estado de enlace sustituyó al método de vector de distancias.\\
+    
+    \textbf{Funcionamiento.} Lo podemos dividir en cinco pasos fundamentales:
+    \begin{enumerate}
+        \item Descubrir a sus vecinos y sus direcciones.
+        \item Medir el costo a cada uno de sus vecinos.
+        \item Construir el paquete con la información recabada.
+        \item Enviar este paquete al resto de routers.
+        \item Calcular la ruta mínima al resto de routers. Una vez que el router ha completado la recopilación de información, puede construir el grafo de la subred. De esta manera, se puede utilizar el algoritmo de Dijkstra para calcular el camino más corto a todos los nodos.
+    \end{enumerate}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%
+    \subsection{Protocolo OSPF}
+    \begin{figure}[H]
+    \centering \includegraphics[width=0.7\textwidth]{img/OSPF.png}
+    \end{figure}
+    \textbf{OSPF (Open Shortest Path First)}, es un protocolo de red para encaminamiento jerárquico de pasarela interior (IGP), que usa el algoritmo Dijkstra para calcular la ruta más corta entre dos nodos.\\
+    
+    Su medida de métrica se denomina \textbf{cost}, y tiene en cuenta diversos parámetros tales como el ancho de banda y la congestión de los enlaces. OSPF es probablemente el protocolo IGP más utilizado en redes grandes.
+\end{onepage}
+\begin{onepage}
+    Se desarrolló como alternativa a RIP para aliviar sus limitaciones:
+    \begin{itemize}
+        \item Distribuye la carga entre caminos equivalentes.
+        \item Particionado lógico de la red para reducir la cantidad de información anunciada.
+        \item Convergencia más rápida, propaga inmediatamente los cambios en las rutas.
+        \item Soporte para máscaras de longitud variable (VLSM) y CIDR
+    \end{itemize}
+    \begin{tcolorbox}[
+    title=Área,
+    colback=blue!5!white,
+    colframe=blue!75!black,
+    fonttitle=\bfseries]
+    Es una agrupación lógica de encaminadores y redes, con un identificador de área de 32 bits (Area ID).\\
+    
+    Los encaminadores mantienen únicamente información de su área y limitan el número de intercambios de información de los enlaces.
+    \end{tcolorbox}
+    %%%%%%%%
+    \subsubsection{Tipos de router en OSPF}
+    \begin{itemize}
+    \item \textbf{Intra-Area Routers (IA): }todos sus interfaces están en el área y mantiene sólo información de la topología de su área.
+    \item \textbf{Area Border Routers (ABR): }conectado a dos o más áreas. Mantiene una Base de Datos para cada una de las áreas a las que está conectado.
+    \item \textbf{AS Boundary Routers (ASBR): } Situado en la frontera del AS, intercambia rutas entre la red OSPF y otros sistemas.
+    \end{itemize}
+    %%%%%
+    \subsubsection{Relación con los vecinos en OSPF}
+    Cada router OSPF realiza un seguimiento de sus nodos vecinos. Para el descubrimiento de vecinos se utiliza el protocolo \textbf{OSPF Hello}.\\
+    
+    OSPF utiliza paquetes \textbf{hello} y dos temporizadores para saber si un vecino sigue disponible. Cuando un router recibe un mensaje Hello de otro router que contiene su propio ID, establece una relación de vecindad con dicho router.\\
+    
+    Después de establecer la vecindad se intercambian las base de datos con el
+    estado de los enlaces. Con esa información construye su árbol de rutas. El árbol de rutas incluye tanto encaminadores (ID) como redes (IP) y el coste
+    asociado.
+\end{onepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Vector de Rutas - Protocolo BGP}
+\textbf{Vector de Rutas} es un protocolo de enrutamiento de red que mantiene la información de ruta actualizada dinámicamente. Está basado en el de vector de distancias.\\
+
+Es diferente del enrutamiento por vector de distancia y el enrutamiento por estado de enlace. Cada entrada en la tabla de enrutamiento contiene la red de destino, el siguiente router y la ruta para llegar al destino. Utiliza CIDR y detecta bucles de forma sencilla.
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Protocolo BGP}
+\textbf{BGP (Border Gateway Protocol)} es un protocolo de intercambio de información de encaminamiento entre sistemas autónomos. Es un ejemplo de protocolo \textbf{EGP}.\\
+
+Los encaminadores intercambian la tabla de rutas cuando establecen la conexión inicial y periódicamente se envían actualizaciones incrementales de la tabla inicial.
+%%%%%
+\subsubsection{Mensajes BGP}
+\begin{itemize}
+    \item \textbf{OPEN: }Establece la sesión BGP. Incluye identificador de AS y parámetros de configuración.
+    \item \textbf{UPDATE: }Actualización incremental de la información de encaminamiento. Cada mensaje puede incluir una red alcanzable en CIDR con sus atributos, incluida la ruta, y una lista de redes retiradas.
+    \item \textbf{NOTIFICATION: }Se envía a los vecinos cuando se detecta un error. Implica un cierre de la sesión y la invalidación de las rutas asociadas.
+    \item \textbf{KEEPALIVE: }Para asegurar que la sesión permanezca activa. Se envía en respuesta a un mensaje OPEN y periódicamente para informar de la
+    presencia del encaminador. Si pasado un tiempo (hold) no se recibe información, se cierra la sesión.
+\end{itemize}
