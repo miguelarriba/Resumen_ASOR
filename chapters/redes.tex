@@ -125,7 +125,7 @@ A la hora de ser enviado, se encapsula \textbf{dentro del campo de datos} de otr
 \vspace{2cm}
 ARP se encarga de encontrar la dirección MAC que corresponde a una determinada dirección IP. Para ello se envía un paquete (ARP request) a la dirección de difusión de la red (broadcast, MAC = FF FF FF FF FF FF) que contiene la dirección IP por la que se pregunta, y se espera a que esa máquina responda (ARP reply) con su dirección MAC.\\
 
-Cada máquiena mantiene una tabla ARP en la que guarda las direcciones IP de las últimas máquinas con las que ha conectado, junto con su dirección MAC.
+Cada máquina mantiene una tabla ARP en la que guarda las direcciones IP de las últimas máquinas con las que ha conectado, junto con su dirección MAC.
 \newpage
 %ICMP
 \section{Protocolo ICMP}
@@ -154,7 +154,7 @@ Algunos tipos de mensajes ICMP:
 	\end{itemize}
 \end{itemize}
 \subsection{ECHO Request/Reply}
-Como mensajes a destacar tenemos ECHO Request y ECHO Reply, que son los que utiliza la orden "ping" para comprobar la conexión.\\
+Como mensajes a destacar tenemos ECHO Request y ECHO Reply, que son los que utiliza la orden "\textbf{ping}" para comprobar la conexión.\\
 
 Éstos mensajes tienen el siguiente formato:
 
@@ -171,7 +171,7 @@ Tipo = 0 & Código = 0  & Checksum \\ \hline
 \end{tabular}
 \end{table}
 \begin{itemize}
-    \item \textbf{Identificador:} Permitte establecer correspondencia entr solicitud (Request) y respuesta (Reply); ambos con el mismo identificador.
+    \item \textbf{Identificador:} Permite establecer correspondencia entre solicitud (Request) y respuesta (Reply); ambos con el mismo identificador.
     \item \textbf{Secuencia:} También se utiliza para establecer la correspondencia entre solicitud y respuesta, cuando se envían varios Echo Requests consecutivos con el mismo identificador.
     \item \textbf{Datos:} Un número determinado de bytes aleatorios.
 \end{itemize}
@@ -184,29 +184,30 @@ Tipo = 0 & Código = 0  & Checksum \\ \hline
     \includegraphics[width=0.7\textwidth]{img/DHCP.png}
 \end{figure}
 
-DHCP (Dynamic Host Configuration Protocol) es un protocolo que permite la configuración dinámica de direcciones IP y máscaras de red, router predeterminado, servidor DNS, y otros parámetros de configuración de red.\\
+DHCP (Dynamic Host Configuration Protocol) es un protocolo de red que permite la \textbf{configuración dinámica} de: direcciones IP y máscaras de red, router predeterminado, servidor DNS, y otros parámetros de configuración de red.\\
 
-Este servidor posee una lista de direcciones IP dinámicas y las va asignando a los clientes conforme éstas van quedando libres, sabiendo en todo momento quién ha estado en posesión de esa IP, cuánto tiempo la ha tenido y a quién se la ha asignado después. Así los clientes de una red IP pueden conseguir sus parámetros de configuración automáticamente.\\
+En ausencia de un servidor DHCP, las direcciones IP de las máquinas conectadas a la red deben de ser asignadas manualmente.\\
+
+Cuando un dispositivo se conecta a la red envía un mensaje tipo broadcast para descubrir los servidores DHCP disponibles en la red. Los servidores le responden con una configuración de parámetros que la nueva máquina puede adoptar.\\
 
 Algunas de sus \textbf{características} son:
 \begin{itemize}
     \item Es un protocolo de red de tipo \textbf{cliente/servidor} sobre UDP en los puertos 67 (servidor) y 68
 (cliente).
     \item Tiene un mecanismo de \textbf{control de errores} basado en sumas de comprobación, temporizadores y retransmisiones.
-    \item Puede proveer de una servidor \textbf{TFTP} al dispositivo cliente. TFTP se utiliza para transferir pequeños archivos entre ordenadores en una red, como imágenes de arranque.
+    \item Utiliza \textbf{TFTP} (protocolo similar a FTP) para transferir las imágenes de arranque, u otros archivos pequeños.
     \item En redes grandes con muchos enlaces, un servidor DHCP es ayudado por \textbf{DHCP relay agents} situados en routers intermedios. Estos agentes retransmiten los mensajes entre cliente y servidor situados en distintas subredes.
 \end{itemize}
 \end{onepage}
 \subsection{Mensajes DHCP}
 Estos son algunas de las operaciones que permite el protocolo.
 \begin{itemize}
-    \item DHCPDISCOVER: Mensaje del cliente (broadcast) para descubrir los servidores disponibles (puede contener la última dirección IP asignada).
-    \item DHCPOFFER: Respuesta de los servidores, con una oferta de parámetros de configuración. Puede
+    \item \textbf{DHCPDISCOVER}: Mensaje del cliente (broadcast) para descubrir los servidores disponibles (puede contener la última dirección IP asignada).
+    \item \textbf{DHCPOFFER}: Respuesta de los servidores, con una oferta de parámetros de configuración. Puede
     recibirse más de una.
-    \item DHCPREQUEST: Petición de oferta del cliente (broadcast, para notificar a todos los servidores) o extensión del tiempo de cesión. El servidor seleccionado se especifica en una opción (Server Identifier, código 54).
-    \item DHCPACK: Mensaje de confirmación (broadcast) y cierre desde el servidor hacia el cliente indicando los parámetros definitivos.
-    \item DHCPRELEASE: Mensaje del cliente para informar al servidor de que ha finalizado el uso de
-    la dirección IP.
+    \item \textbf{DHCPREQUEST}: Petición de oferta del cliente (broadcast, para notificar a todos los servidores) o extensión del tiempo de cesión. El servidor seleccionado se especifica en una opción (Server Identifier, código 54).
+    \item \textbf{DHCPACK}: Mensaje de confirmación (broadcast) y cierre desde el servidor hacia el cliente indicando los parámetros definitivos.
+    \item \textbf{DHCPRELEASE}: Mensaje del cliente para informar al servidor de que ha finalizado el uso de la dirección IP.
 \end{itemize}
 \subsection{Datagrama DHCP}
 \begin{figure}[H]
@@ -221,13 +222,13 @@ Estos son algunas de las operaciones que permite el protocolo.
     \centering
     \includegraphics[width=0.7\textwidth]{img/TCP.png}
 \end{figure}
-TCP (Transmission Control Protocol) es un protocolo de transporte fiable y orientado a conexión (a diferencia de UDP, que es no fiable y no orientado a conexión). También proporciona un mecanismo para distinguir distintas aplicaciones dentro de una misma máquina, a través del concepto de puerto.
+TCP (Transmission Control Protocol) es un protocolo de transporte fiable y orientado a conexión (a diferencia de UDP, que es no fiable y no orientado a conexión). También proporciona un mecanismo para distinguir distintas aplicaciones dentro de una misma máquina a través del concepto de puerto.
 
 \subsubsection{Características de TCP}
 \begin{itemize}
     \item Reordena los segmentos procedentes del protocolo IP y permite comenzar y finalizar la comunicación de forma consensuada entre ambas máquinas. \textbf{Orientado a conexión}.
     \item Monitorea el flujo de datos y así evita la saturación de la red. \textbf{Ventana Deslizante}.
-    \item Permite que los datos se formen en segmentos de longitud variada para "entregarlos" al protocolo IP.
+    \item Permite que los datos se formen en segmentos de longitud variada para \enquote{entregarlos} al protocolo IP.
     \item Sirve para establecer la comunicación entre procesos de distintas máquinas. \textbf{Puertos}.
     \item Permite \textbf{multiplexar} los datos, es decir, que la información que viene de diferentes fuentes pueda circular simultáneamente por el mismo medio.
 \end{itemize}
@@ -431,7 +432,7 @@ segmento hasta que se recibe el ACK. El RTT puede presentarse de tres formas dis
 En éstos valores se basan los 3 \textbf{algoritmos} que puede usar el temporizador de retransmisión.
 \begin{itemize}
     \item \textbf{Jacobson: }utiliza únicamente RTTs.
-    \item \textbf{Jacobson/Karels: }mejora el anterior combinando RTTS y RTTD.
+    \item \textbf{Jacobson/Karels: }mejora el anterior combinando RTTs y RTTd.
     \item \textbf{Karn: }se basa en el anterior se basa solo en ACKs de segmentos que fueron enviados solo una vez.
 \end{itemize}
 \end{tcolorbox}
@@ -518,115 +519,7 @@ Durante la conexión pueden aparecer congestiones que se detectan de forma indir
         \begin{figure}[H] \centering
         \includegraphics[width=0.9\textwidth]{img/TCP_congtimeout.png}\end{figure}
 \end{itemize}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{onepage}
 
-
-\section{Servicios de Red: Filtrado de paquetes.}
-\subsection{Firewall y filtrado de paquetes.}
-Un \textbf{Firewall:} es un dispositivo configurado para permitir, limitar, cifrar o descifrar el tráfico de red en base a un conjunto de normas.
-
-\subsubsection{Tipos de Firewall.}
-\begin{itemize}
-    \item \textbf{En función del estado (stateless/stateful): }Si el filtrado se basa únicamente en la cabecera del paquete o además considera el estado de la conexión.
-    \item \textbf{En función de la capa (de red o de aplicación):} consideran informacion no solo de las cabeceras si no de los datos(que normalmente pertenecen a protocolos de aplicación como http). Este tipo de firewalls se dice que realizan DPI (Deep packet inspection).
-\end{itemize}
-
-\subsection{Iptables.}
-\textbf{Netfilter} es una herramienta del kernel de Linux que proporciona filtrado y modificación de paquetes.\\
-
-El componente más popular construido sobre Netfilter es \textbf{iptables}, una herramienta de cortafuegos que permite no solamente filtrar paquetes, sino también realizar traducción de direcciones de red (NAT).\\
-\begin{tcolorbox}[
-colback=yellow!5!white,
-colframe=yellow!75!cyan,
-fonttitle=\bfseries]
-Para tener clara la estructura de iptables, primero debemos entender los siguientes conceptos:
-\begin{itemize}
-    \item \textbf{Regla: }define qué hacer con un paquete que cumple unas determinadas características. \textit{Por ejemplo descartar los paquetes con una IP destino determinada.}
-    \item \textbf{Cadena: }es una lista ordenada de reglas que se aplican sobre los paquetes en distintos puntos del proceso del paquete.
-    \item \textbf{Tabla: }es un conjunto de cadenas, cada una destinada a diferentes tipos de procesamiento sobre cada paquete.
-\end{itemize}
-\end{tcolorbox}
-\end{onepage}
-
-\begin{onepage}
-\subsubsection{Tablas predefinidas.}
-\begin{itemize}
-    \item \textbf{Tabla filter: }es la tabla por defecto. Contiene tres cadenas, que clasifican los paquetes:
-        \begin{itemize}
-            \item INPUT: paquetes recibidos.
-            \item OUTPUT: paquetes generados.
-            \item FORWARD: paquetes que atraviesan el sistema.
-        \end{itemize}
-    
-    \item \textbf{Tabla NAT: }reescribe direcciones origen/destino y los puertos de un paquete. Contiene tres cadenas.
-            \begin{itemize}
-                \item PREOUTING: se aplica a paquetes de entrada antes de pasar por la tabla de encaminamiento local.
-                \item POSTROUTING: se aplica a paquetes justo antes de ser enviados, modifica la direccion de origen de los paquetes.
-                \item OUTPUT: similar a la cadena homonima de la tabla filter.
-            \end{itemize}
-    \item \textbf{Tabla Mangle: }sirve para cambiar algunos campos del paquete. Contiene las cinco cadenas anteriormente descritas.
-    \end{itemize}
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=0.8\textwidth]{img/GraficoCadenas.PNG}
-        \caption{Diagrama de cadenas}
-    \end{figure}
-    \end{onepage}
-\subsubsection{Definición de Reglas.}
-    Las reglas se pueden definir según la información del paquete o según el estado de la conexión. Debe incluir la \textbf{cadena} a la que se añade la regla y un \textbf{objetivo} (qué hacer si el paquete coincide).
-    
-    \begin{table}[H]\centering\begin{tabular}{|l|l|}\hline
-    \multicolumn{2}{|c|}{\cellcolor[HTML]{000000}{\color[HTML]{FFFFFF} \textbf{Política por defecto}}} \\ \hline
-    -P INPUT & \multirow{3}{*}{Política por defecto} \\ \cline{1-1}
-    -P OUTPUT &  \\ \cline{1-1}
-    -P FORWARD &  \\ \hline
-    \end{tabular}\end{table}
-    
-    \begin{table}[H]\centering\begin{tabular}{|l|l|}\hline
-    \multicolumn{2}{|c|}{\cellcolor[HTML]{000000}{\color[HTML]{FFFFFF} \textbf{Cadena}}} \\ \hline
-    -A INPUT & Añade regla a cadena de entrada \\ \hline
-    -A OUTPUT & Añade regla a cadena de salida \\ \hline
-    -A FORWARD & Añade regla a la cadena forward (sólo en caso de routers) \\ \hline
-    \end{tabular}\end{table}
-
-    \begin{table}[H]\centering\begin{tabular}{|l|l|}\hline
-    \multicolumn{2}{|c|}{\cellcolor[HTML]{000000}{\color[HTML]{FFFFFF} \textbf{Objetivo}}} \\ \hline
-    -j DROP &  \\ \hline
-    -j ACCEPT &  \\ \hline
-    -j REJECT & igual que DROP pero envía un ICMP de un tipo que puede definirse \\ \hline
-    -j LOG &  \\ \hline
-    \end{tabular}\end{table}  
-    
-    \begin{table}[H]\centering\begin{tabular}{|c|}\hline
-    \rowcolor[HTML]{000000}  {\color[HTML]{FFFFFF} \textbf{Opciones}} \\ \hline
-    Consultar el manual de iptables \\ \hline
-    \end{tabular}\end{table}
-    
-    \begin{figure}[H]
-        \centering
-        \includegraphics[width=\textwidth]{img/EjemplosReglas.PNG}
-        \caption{Ejemplos de reglas}
-    \end{figure}
-    
-\begin{onepage}
-    \subsubsection{NAT}
-    \textbf{NAT: Network Address Translation:} permite dar acceso a Internet a máquinas en redes privadas realizando traducciones.\\
-    
-    NAT almacena una \textbf{tabla} que relaciona las direcciones privadas con las direcciones públicas.\\
-    
-    Existen los siguientes modos de funcionamiento:
-    \begin{itemize}
-        \item \textbf{Estáticas: }consiste en una asignación fija de N direcciones privadas a N direcciones públicas.
-        \item \textbf{Dinámicas: }consiste en una asignación de N direcciones privadas a M direcciones públicas, donde $(M < N)$. Por tanto las N direcciones privadas se disputan las M direcciones públicas.
-        \item \textbf{Sobrecarga o NAPT: }asigna N direcciones privadas a 1 dirección pública.
-        \begin{figure}[H]\centering\includegraphics[width=0.7\textwidth]{img/NAT.png}\end{figure}
-        \begin{itemize}
-            \item Para paquetes de salida se utiliza la técnica de \textbf{Masquerading}: traduce la dirección privada a la dirección pública asignada al router. 
-            \item Para los paquetes entrantes se utiliza la técnica de \textbf{Port forwarding, o servidores virtuales}, el router tiene una tabla con unas traducciones que depende del \textbf{número de puerto} asignado con el router.
-        \end{itemize}
-    \end{itemize}
-\end{onepage}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{DNS}
 \begin{figure}[H]\centering\includegraphics[width=0.7\textwidth]{img/DNS.png}
@@ -686,7 +579,14 @@ Un \textbf{FQDN} (fully qualified domain name) es un nombre que incluye el nombr
         \item \textbf{SOA: }marca el comienzo de definición de una zona.
         \item \textbf{NS: }especifica los servidores autoritativos para la zona e incluye los servidores de nombres de los subdominios delegados a otras organizaciones.
         \item \textbf{A: }El registro Address (A para IPv4 y AAAA para IPv6) es la base de DNS. Incluye la traducción directa (nombre $\rightarrow$ IP)
-        \item \textbf{PTR: }El registros Pointer contiene la traducción inversa (IP $\rightarrow$ nombre)
+        \item \textbf{PTR: }El registro Pointer contiene la traducción inversa (IP $\rightarrow$ nombre). Por ejemplo, supongamos que queremos almacenar la siguiente dirección IPv4: \textit{192.0.2.5.}, el registro almacenará la dirección de forma inversa, seguida del dominio \textit{in-addr.arpa.}
+        \begin{center}
+            5.2.0.192.in-addr.arpa
+        \end{center}
+        En el caso de IPv6, el procedimiento es el mismo, pero el dominio en este caso es \textit{ip6.arpa}. Por ejemplo, para la dirección 2001:db8::567:89ab se almacena el puntero:
+        \begin{center}
+            b.a.9.8.7.6.5.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.0.8.b.d.0.1.0.0.2.ip6.arpa
+        \end{center}
         \item \textbf{MX: }es usado por los sistemas de correo para encaminar los mensajes eficientemente. Permite recibir de forma centralizada el correo de una organización.
         \item \textbf{CNAME: } permite definir un alias para el nombre canónico. Deben siempre apuntar a un dominio (nunca a una IP).
     \end{itemize}
@@ -806,11 +706,11 @@ Un datagrama IPv6 está compuesto principalmente de dos partes: la cabecera y lo
 
 %%
 \begin{onepage}
-\subsubsection{Cambios con respecto a IPv6}
+\subsubsection{Cambios con respecto a IPv4}
 \begin{itemize}
     \item El campo Header Length se ha eliminado, ya que la longitud es fija.
     \item No hay campo Checksum, ya que se realiza por los protocolos superiores.
-    \item Los campos de fragmentación se eliminan de la cabecera y se implementan en cabeceras de extensión.
+    \item Los campos de fragmentación se eliminan de la cabecera y se implementan en \textbf{cabeceras de extensión}.
 \end{itemize}
 %%
 \subsubsection{Fragmentación}
@@ -1074,3 +974,112 @@ Los encaminadores intercambian la tabla de rutas cuando establecen la conexión 
     \item \textbf{KEEPALIVE: }Para asegurar que la sesión permanezca activa. Se envía en respuesta a un mensaje OPEN y periódicamente para informar de la
     presencia del encaminador. Si pasado un tiempo (hold) no se recibe información, se cierra la sesión.
 \end{itemize}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{onepage}
+
+
+\section{Servicios de Red: Filtrado de paquetes.}
+\subsection{Firewall y filtrado de paquetes.}
+Un \textbf{Firewall:} es un dispositivo configurado para permitir, limitar, cifrar o descifrar el tráfico de red en base a un conjunto de normas.
+
+\subsubsection{Tipos de Firewall.}
+\begin{itemize}
+    \item \textbf{En función del estado (stateless/stateful): }Si el filtrado se basa únicamente en la cabecera del paquete o además considera el estado de la conexión.
+    \item \textbf{En función de la capa (de red o de aplicación):} consideran información no solo de las cabeceras si no de los datos(que normalmente pertenecen a protocolos de aplicación como http). Este tipo de firewalls se dice que realizan DPI (Deep packet inspection).
+\end{itemize}
+
+\subsection{Iptables.}
+\textbf{Netfilter} es una herramienta del kernel de Linux que proporciona filtrado y modificación de paquetes.\\
+
+El componente más popular construido sobre Netfilter es \textbf{iptables}, una herramienta de cortafuegos que permite no solamente filtrar paquetes, sino también realizar traducción de direcciones de red (NAT).\\
+\begin{tcolorbox}[
+colback=yellow!5!white,
+colframe=yellow!75!cyan,
+fonttitle=\bfseries]
+Para tener clara la estructura de iptables, primero debemos entender los siguientes conceptos:
+\begin{itemize}
+    \item \textbf{Regla: }define qué hacer con un paquete que cumple unas determinadas características. \textit{Por ejemplo descartar los paquetes con una IP destino determinada.}
+    \item \textbf{Cadena: }es una lista ordenada de reglas que se aplican sobre los paquetes en distintos puntos del proceso del paquete.
+    \item \textbf{Tabla: }es un conjunto de cadenas, cada una destinada a diferentes tipos de procesamiento sobre cada paquete.
+\end{itemize}
+\end{tcolorbox}
+\end{onepage}
+
+\begin{onepage}
+\subsubsection{Tablas predefinidas.}
+\begin{itemize}
+    \item \textbf{Tabla filter: }es la tabla por defecto. Contiene tres cadenas, que clasifican los paquetes:
+        \begin{itemize}
+            \item INPUT: paquetes recibidos.
+            \item OUTPUT: paquetes generados.
+            \item FORWARD: paquetes que atraviesan el sistema.
+        \end{itemize}
+    
+    \item \textbf{Tabla NAT: }reescribe direcciones origen/destino y los puertos de un paquete. Contiene tres cadenas.
+            \begin{itemize}
+                \item PREOUTING: se aplica a paquetes de entrada antes de pasar por la tabla de encaminamiento local.
+                \item POSTROUTING: se aplica a paquetes justo antes de ser enviados, modifica la dirección de origen de los paquetes.
+                \item OUTPUT: similar a la cadena homónima de la tabla filter.
+            \end{itemize}
+    \item \textbf{Tabla Mangle: }sirve para cambiar algunos campos del paquete. Contiene las cinco cadenas anteriormente descritas.
+    \end{itemize}
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.8\textwidth]{img/GraficoCadenas.PNG}
+        \caption{Diagrama de cadenas}
+    \end{figure}
+    \end{onepage}
+\subsubsection{Definición de Reglas.}
+    Las reglas se pueden definir según la información del paquete o según el estado de la conexión. Debe incluir la \textbf{cadena} a la que se añade la regla y un \textbf{objetivo} (qué hacer si el paquete coincide).
+    
+    \begin{table}[H]\centering\begin{tabular}{|l|l|}\hline
+    \multicolumn{2}{|c|}{\cellcolor[HTML]{000000}{\color[HTML]{FFFFFF} \textbf{Política por defecto}}} \\ \hline
+    -P INPUT & \multirow{3}{*}{Política por defecto} \\ \cline{1-1}
+    -P OUTPUT &  \\ \cline{1-1}
+    -P FORWARD &  \\ \hline
+    \end{tabular}\end{table}
+    
+    \begin{table}[H]\centering\begin{tabular}{|l|l|}\hline
+    \multicolumn{2}{|c|}{\cellcolor[HTML]{000000}{\color[HTML]{FFFFFF} \textbf{Cadena}}} \\ \hline
+    -A INPUT & Añade regla a cadena de entrada \\ \hline
+    -A OUTPUT & Añade regla a cadena de salida \\ \hline
+    -A FORWARD & Añade regla a la cadena forward (sólo en caso de routers) \\ \hline
+    \end{tabular}\end{table}
+
+    \begin{table}[H]\centering\begin{tabular}{|l|l|}\hline
+    \multicolumn{2}{|c|}{\cellcolor[HTML]{000000}{\color[HTML]{FFFFFF} \textbf{Objetivo}}} \\ \hline
+    -j DROP &  \\ \hline
+    -j ACCEPT &  \\ \hline
+    -j REJECT & igual que DROP pero envía un ICMP de un tipo que puede definirse \\ \hline
+    -j LOG &  \\ \hline
+    \end{tabular}\end{table}  
+    
+    \begin{table}[H]\centering\begin{tabular}{|c|}\hline
+    \rowcolor[HTML]{000000}  {\color[HTML]{FFFFFF} \textbf{Opciones}} \\ \hline
+    Consultar el manual de iptables \\ \hline
+    \end{tabular}\end{table}
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=\textwidth]{img/EjemplosReglas.PNG}
+        \caption{Ejemplos de reglas}
+    \end{figure}
+    
+\begin{onepage}
+    \subsubsection{NAT}
+    \textbf{NAT: Network Address Translation:} es un mecanismo utilizado por routers IP que permite dar acceso a Internet a máquinas en redes privadas mediante traducciones.\\
+    
+    NAT almacena una \textbf{tabla} que relaciona las direcciones privadas con las direcciones públicas.\\
+    
+    Existen los siguientes modos de funcionamiento:
+    \begin{itemize}
+        \item \textbf{Estático: }consiste en una asignación fija de N direcciones privadas a N direcciones públicas.
+        \item \textbf{Dinámico: }consiste en una asignación de N direcciones privadas a M direcciones públicas, donde $(M < N)$. Por tanto las N direcciones privadas se disputan las M direcciones públicas.
+        \item \textbf{Sobrecarga o NAPT: }asigna N direcciones privadas a 1 dirección pública.
+        \begin{figure}[H]\centering\includegraphics[width=0.7\textwidth]{img/NAT.png}\end{figure}
+        \begin{itemize}
+            \item Para paquetes de salida se utiliza la técnica de \textbf{Masquerading}: traduce la dirección privada a la dirección pública asignada al router. 
+            \item Para los paquetes entrantes se utiliza la técnica de \textbf{Port forwarding, o servidores virtuales}, el router tiene una tabla con unas traducciones que depende del \textbf{número de puerto} asignado con el router.
+        \end{itemize}
+    \end{itemize}
+\end{onepage}
