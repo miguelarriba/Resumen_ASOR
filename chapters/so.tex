@@ -44,7 +44,7 @@ El \textbf{primer carácter} puede indicar:
     \item \textbf{'d'}:	directorio.
     \item \textbf{'l'}:	enlace simbólico.
 \end{itemize}
-Tras el cual s suceden tres grupos de tres caracteres cada uno:
+Tras el cual se suceden 3 grupos de 3 caracteres cada uno:
 \begin{enumerate}
     \item Lo que el \textbf{propietario} puede hacer.
     \item Lo que los miembros del \textbf{grupo de usuarios} pueden hacer.
@@ -62,7 +62,7 @@ En cada grupo, cada uno de los tres caracteres representa los permisos de lectur
 \begin{itemize}
     \item Un \textbf{enlace físico} es una referencia o puntero a un archivo. Un enlace físico apunta directamente al inodo que contiene la información.\\
     
-    Éste tipo de ficheros dispone de un \textbf{contador} de enlaces que aumenta o disminuye en función del número de punteros que le referencian. Cuando el puntero llega a 0, el archivo se elimina.
+    Este tipo de ficheros dispone de un \textbf{contador} de enlaces que aumenta o disminuye en función del número de punteros que le referencian. Cuando el puntero llega a 0, el archivo se elimina.
     
     \item Un \textbf{enlace simbólico} no es un puntero que apunta al inodo que contiene los datos, sino que guarda la ruta en la que se encuentra ese inodo. Si se elimina el enlace, no se eliminará el auténtico.
 \end{itemize}
@@ -70,7 +70,7 @@ En cada grupo, cada uno de los tres caracteres representa los permisos de lectur
 \vspace{3cm}
 %%%%%%%%%%%%%%%%%%
 \section{Cerrojos}
-Los cierres de exclusión mutua o cerrojos son un mecanismo de sincronización que limita el acceso a un recurso compartido por varios procesos o hilos en un ambiente de ejecución concurrente, permitiendo así la exclusión mutua.
+Los cierres de exclusión mutua o cerrojos son un mecanismo de sincronización que limita el acceso a un recurso compartido por varios procesos o hilos en un ambiente de ejecución concurrente, permitiendo así la \textbf{exclusión mutua}.
 
 \subsubsection{El ejemplo del inodoro}
 Este mecanismo se puede ver en un ejemplo de la vida real. Supongamos un baño público, donde sólo puede entrar una persona a la vez. Una vez dentro, se emplea un cierre para evitar que entren otras personas.\\
@@ -86,6 +86,31 @@ Un \textbf{proceso} es una unidad de actividad que se caracteriza por la ejecuci
 \begin{figure}[H]
 \centering \includegraphics[width=0.9\textwidth]{img/ProcesEstados.png}
 \end{figure}
+
+%%%%%%%%%%%%%%%%%%
+\subsection{UID}
+En sistemas tipo Unix, los usuarios son representados por un identificador de usuario, normalmente abreviado como UID o User ID.
+\begin{itemize}
+    \item El rango de los valores de los UID varía entre los diferentes sistemas, estando como mínimo comprendidos entre 0 y 32767.
+    \item El superusuario debe tener siempre UID 0.
+    \item Al usuario nobody siempre se le suele asignar el UID más alto posible (como oposición al superusuario).
+\end{itemize}
+ Cada proceso maneja dos tipos de UID:
+ \begin{itemize}
+    \item \textbf{UID real: }identifica al usuario que realmente posee el proceso.
+    \item \textbf{UID efectivo: }es el valor que el SO consulta a la hora de tomar decisiones.
+ \end{itemize}
+ Normalmente el UID real y efectivo tienen el mismo valor, pero cuando ejecutamos un programa del tipo \textit{setuid}, estamos modificando el UID efectivo.
+ %%%%%%%%%%%%%%%%%%
+\subsection{Permisos}
+\textbf{umask} es una orden y una función en entornos POSIX que establece los permisos por defecto para los nuevos archivos y directorios creados por el proceso actual.
+
+Los sistemas Unix modernos permiten que las máscaras se especifiquen de dos modos:
+\begin{itemize}
+    \item Un permiso por defecto, también llamado máscara simbólica. Por ejemplo, u=rwx,g=rwx,o=
+    \item Un número en octal que controla qué permisos se enmascararán (no se establecerán) para cualquier nuevo archivo, por ejemplo, 007.
+\end{itemize}
+
 
 %%%%%%%%%%%%%%%%%%
 \subsection{Planificador}
@@ -166,84 +191,18 @@ Una \textbf{señal} es una forma de comunicación entre procesos. En esencia es 
 \end{comment}
 
 \subsection{Tuberías}
-Una \textbf{tubería} ('|') consiste en una cadena de procesos conectados de forma tal que la salida de cada elemento de la cadena es la entrada del próximo. Permiten la comunicación y sincronización entre procesos.\\
+Una \textbf{tubería} consiste en una cadena de procesos conectados de forma tal que la salida de cada elemento de la cadena es la entrada del siguiente. Permiten la comunicación y sincronización entre procesos.\\
 
-\begin{itemize}
-    \item El sistema las trata como si fueran ficheros(nº de inodo, op entrada salida tipicas...).
-    \item El sistema realiza la sincronizacion necesaria entre los extremos de la tuberia.
-    \item La tubería reside en memoria principal.
-\end{itemize}
-\begin{center}
-    \textit{Ejemplo: ls -l | wc -l nos cuenta las lineas que ocupa ls -l}
-\end{center}
-\begin{comment}
-
-Crear una tuberia
-
-int pipe(int fd[2]);
-
-- Una tuberia se bloquea hasta que esten todos los descriptores de ficheros cerrados.
-- Si todos los descriptores de lectura se han cerrado, el proceso q intente escribir se va a llevar la señal SIGPIPE.
-
-- 
-
-* Esquema de comunicacion de tuberias
-
-* Esquema comunicacion bidireccional: es necesario crear dos pipes, no se suele usar, xq se suelen usar sockets
-
-* Esquema los pasos que habria que seguir para comunicar dos procesos
-
-%%%Puede ser que el codigo tenga un error por qu el padre no ha cerrado el descriptor de fichero. probar!!!!!!
-\begin{lstlisting}[language=C++]
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-
-int main(){
-    int fd[2], rc, pid;
-    
-    rc = pipe(fd);
-    if(rc==1){
-        perror("pipe");
-        exit(1);
-    }
-    
-    pid = fork();
-    if(pid==-1){
-        perror("fork");
-        exit(1);
-    }else if(pid==0){
-        dup2(fd[1],STDUOT_FILEND);
-        close(fd[0]);
-        close(fd[1]);
-        execlp("ls","ls","-l",NULL);
-    }
-    
-    
-    pid = fork();
-    if(pid==-1){
-        perror("fork");
-        exit(1);
-    }else if(pid==0){
-        dup2(fd[1],STDIN_FILEND);
-        close(fd[0]);
-        close(fd[1]);
-        execlp("wc","wc","-l",NULL);
-    }
-    wait(NULL);//espera al prmer hijo
-    wait(NULL);//espera al seg hijo
-}
-
-}
+\textit{Ejemplo: contar las lineas que ocupa ls -l}
+\begin{lstlisting}[language=bash,numbers=none]
+    $ ls -l | wc -l
 \end{lstlisting}
-\end{comment}
-%%%%%%%%%%%%%%%%%%%
-\subsubsection{Tuberías sin nombre}
+
+\subsubsection{Tuberías sin nombre (PIPE)}
 Las tuberías sin nombre tienen asociado un fichero en memoria principal, por lo tanto, son temporales y se eliminan cuando no están siendo usados ni por productores ni por consumidores. Permiten la comunicación entre el proceso que crea un cauce y procesos hijos tras la creación de la tubería.\\
 
 La comunicación mediante tuberías sin nombre se realiza únicamente entre procesos con relación de parentesco.
-\subsubsection{Tuberías con nombre}
+\subsubsection{Tuberías con nombre (FIFO)}
 Su diferencia respecto a las tuberías sin nombre radica en que el cauce se crea en el sistema de archivos, y por lo tanto no tienen carácter temporal. Se manejan mediante llamadas al sistema (open, close, read y write) como el resto de ficheros del sistema. Permiten la comunicación entre los procesos que usen dicha tubería, aunque no exista una conexión jerárquica entre ellos.\\
 
 Varios procesos pueden abrir la tubería para lectura o escritura, y ambos extremos (de lectura y de escritura) deben abrirse antes de poder intercambiar datos, ya que la apertura se bloquea hasta que se abre el otro extremo.
@@ -264,20 +223,18 @@ Un socket permite el intercambio de datos bidireccional entre procesos cliente y
 \begin{itemize}
     \item \textbf{SOCK\_STREAM}
     \begin{itemize}
-        \item Orientado a conexión, representa un flujo de bytes con entrega ordenada, fiable (retransmisión) y con eliminación de mensajes duplicados
-        \item Comunicación full-duplex
+        \item Orientado a conexión, representa un flujo de bytes con entrega ordenada, fiable (retransmisión) y con eliminación de mensajes duplicados.
+        \item Comunicación full-duplex.
         \item Flujo de bytes similar a una tubería
-        \item Debe establecerse la conexión para poder enviar datos, y se envía la señal SIGPIPE cuando el otro extremo pierde la conexión
-        \item Debe marcarse el principio y final del mensaje (ej. <HTML></HTML>, { “msg”: {...}})
-        \item Operaciones: connect(2), recv(2), send(2), read(2) y write(2)
+        \item Debe establecerse la conexión para poder enviar datos, y se envía la señal SIGPIPE cuando el otro extremo pierde la conexión.
+        \item Debe marcarse el principio y final del mensaje (ej. <HTML></HTML>, { “msg”: {...}}).
     \end{itemize}
     
     \item \textbf{SOCK\_DGRAM}
     \begin{itemize}
         \item Basado en datagramas, sin conexión, no confiables, sin entrega ordenada y sin gestión de duplicados.
-        \item Comunicación full-duplex
-        \item Envío y recepción de mensajes de longitud máxima fija
-        \item Operaciones: send(2), recv(2), sendto(2), recvfrom(2)
+        \item Comunicación full-duplex.
+        \item Envío y recepción de mensajes de longitud máxima fija.
     \end{itemize}
     
     \item \textbf{SOCK\_RAW}
