@@ -201,6 +201,11 @@ Algunas de sus \textbf{características} son:
 \end{onepage}
 \subsection{Mensajes DHCP}
 Estos son algunas de las operaciones que permite el protocolo.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.3\textwidth]{img/DHCPmsgs.png}
+\end{figure}
+
 \begin{itemize}
     \item \textbf{DHCPDISCOVER}: Mensaje del cliente (broadcast) para descubrir los servidores disponibles (puede contener la última dirección IP asignada).
     \item \textbf{DHCPOFFER}: Respuesta de los servidores, con una oferta de parámetros de configuración. Puede
@@ -220,7 +225,7 @@ Estos son algunas de las operaciones que permite el protocolo.
 \section{Protocolo TCP}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.7\textwidth]{img/TCP.png}
+    \includegraphics[width=0.8\textwidth]{img/TCP.png}
 \end{figure}
 TCP (Transmission Control Protocol) es un protocolo de transporte fiable y orientado a conexión (a diferencia de UDP, que es no fiable y no orientado a conexión). También proporciona un mecanismo para distinguir distintas aplicaciones dentro de una misma máquina a través del concepto de puerto.
 
@@ -432,8 +437,8 @@ segmento hasta que se recibe el ACK. El RTT puede presentarse de tres formas dis
 En éstos valores se basan los 3 \textbf{algoritmos} que puede usar el temporizador de retransmisión.
 \begin{itemize}
     \item \textbf{Jacobson: }utiliza únicamente RTTs.
-    \item \textbf{Jacobson/Karels: }mejora el anterior combinando RTTs y RTTd.
-    \item \textbf{Karn: }se basa en el anterior se basa solo en ACKs de segmentos que fueron enviados solo una vez.
+    \item \textbf{Jacobson-Karels: }mejora el anterior combinando RTTs y RTTd.
+    \item \textbf{Karn: }basado en Jacobson-Karels, se centra en ACKs de segmentos que fueron enviados solo una vez.
 \end{itemize}
 \end{tcolorbox}
 \subsection{Control de flujo}
@@ -469,7 +474,7 @@ Para evitar la ventana tonta en el \textbf{receptor}, se inventó el \textbf{alg
 
 
 \subsection{Control de la congestión}
-Cuando se pierde paquetes en Internet, la mayoría de las veces se debe a un problema de congestión en algún punto de la red: puede ocurrir que el router no pueda procesar paquetes al ritmo al que los recibe. Entonces, empieza a descartar paquetes.\\
+Cuando se pierde paquetes en Internet, la mayoría de las veces se debe a un problema de congestión en algún punto de la red: puede ocurrir que el router no pueda procesar paquetes al ritmo al que los recibe.\\
 
 El control de la congestión y el flujo son dos mecanismos diferentes. El control de flujo se encarga de ajustar la transmisión en el receptor, mientras que el \textbf{control de congestión} puede aparecer en cualquier punto de la red. Si un router no es capaz de gestionar todos los paquetes, empieza a descartar.\\
 
@@ -480,7 +485,7 @@ La ventana de congestión es complementaria a la ventana de recepción \textbf{(
 \begin{itemize}
     \item En una situación de no congestión (sin pérdida o retraso de segmentos) la ventana de congestión alcanza el mismo tamaño que la ventana de recepción \textbf{(CW = RW)}.
     \item Cuando se produce una situación de congestión el tamaño de \textbf{CW} se va reduciendo progresivamente.
-    \item Cuando la situación de congestión desaparece, el tamaño de CW se va aumentando progresivamente
+    \item Cuando la situación de congestión desaparece, el tamaño de \textbf{CW} se va aumentando progresivamente
     \item El número máximo de bytes que puede enviar el emisor \textbf{(AW, Allowed Window)} es el mínimo de ambos tamaños de ventana:\\
     \begin{center}
         $AW = min ( RW, CW )$
@@ -532,11 +537,11 @@ El servidor DNS utiliza una \textbf{base de datos distribuida} que almacena info
 Un nombre de dominio usualmente consiste en dos o más etiquetas, separadas por puntos. \textit{Por ejemplo, www.ucm.es.}
 
 \[(root) \rightarrow (es) \rightarrow (ucm)\]\\
-\textit{\enquote{es}} es un subdominio de primer nivel, que pueden ser generales (com, gov, net..) o de país (fr, es, uk...).\\
+\textit{\enquote{es}} es un subdominio de primer orden, que pueden ser generales (com, gov, net..) o de país (fr, es, uk...).\\
 
 \textit{\enquote{ucm}} es un subdominio de segundo orden, etc...\\
 
-Una \textbf{zona} DNS es una parte del espacio de nombres que se delega a una entidad legal. Cuando un navegador web necesita encontrar la dirección IP para un nombre de host, realiza una búsqueda de DNS en el servidor DNS que administra la zona para ese nombre de host.\\
+Una \textbf{zona} DNS es una parte del espacio de nombres que se delega a una entidad legal. Cuando un navegador web necesita encontrar la dirección IP para un nombre de host, realiza una búsqueda en el servidor DNS que administra la zona para ese nombre de host.\\
 
 Un \textbf{FQDN} (fully qualified domain name) es un nombre que incluye el nombre de la computadora y el nombre de dominio asociado a ese equipo. Por ejemplo, dada la computadora llamada \enquote{serv1} y el nombre de dominio \enquote{bar.com.}, el FQDN será \enquote{serv1.bar.com.}
 \newpage
@@ -555,7 +560,7 @@ Un \textbf{FQDN} (fully qualified domain name) es un nombre que incluye el nombr
     \item \textbf{BIND} es la implementación DNS más usada y es Open Source.
     \item Los datagramas DNS se encapsulan en \textbf{datagramas UDP}, aunque se puede utilizar TCP en algunos casos (como obtener toda la información de un servidor, o si la respuesta tiene más de 512 bytes)\\
     
-    \item Ante una consulta DNS, se busca en primer lugar si dispone de la respuesta en la memoria caché. En caso contrario, se inicia la búsqueda de manera recursiva. Una vez encontrada la respuesta, el servidor DNS guardará el resultado en su memoria caché para futuros usos y devuelve el resultado.
+    \item Ante una consulta DNS, se busca en primer lugar si dispone de la respuesta en la memoria caché. Si la tiene, la devuelve, y si no actúa de distinta forma dependiendo de si el servidor es o no recursivo.
     \begin{figure}[H]\centering\includegraphics[width=\textwidth]{img/DNS_Busqueda.png}\end{figure}
     \item \textbf{Cachear} la resolución de direcciones mejora notablemente la eficiencia. La relación nombre-IP es prácticamente estática, por lo que las respuestas se cachean durante TTL (“time-to-live”) que varía según el nivel al que se encuentren, por ejemplo:
     \begin{itemize}
@@ -592,6 +597,17 @@ Un \textbf{FQDN} (fully qualified domain name) es un nombre que incluye el nombr
     \end{itemize}
     \item El comando \textbf{dig} se puede usar para realizar consultas DNS.
 \end{enumerate}
+\subsubsection{Ejemplos de registros}
+\begin{table}[H]\centering
+\begin{tabular}{cl}
+A/AAAA & abc.com IN A 172.16.48.1                             \\
+PTR    & 1.48.16.172.in-addr.arpa. IN PTR abc.com.            \\
+SOA    & IN  SOA  nameserver.place.dom.  postmaster.place.dom \\
+NS     & noam.abc.com. IN NS noamdc1.noam.abc.com.            \\
+MX     & ucm.es. IN MX 0 mail.ucm.es                          \\
+CNAME  & web.ucm.es IN CNAME www.ucm.es                      
+\end{tabular}
+\end{table}
 %%%%%%%%%%%
 \begin{onepage}
 \section{Protocolo IPv6}
@@ -659,19 +675,48 @@ IPv6 usa la notación \textbf{hexadecimal}.
 
 %%
 \subsubsection{Direcciones Multicast}
+Las direcciones multicast son esencialmente lo mismo que las direcciones broadcast de IPv4.\\
+
 Una dirección multicast IPv6 es un identificador para un grupo de interfaces (normalmente en diferentes nodos). Una interfaz puede pertenecer a cualquier número de grupos multicast. Las direcciones multicast tienen el siguiente formato:
 
 \begin{figure}[H]
     \centering \includegraphics[width=\textwidth]{img/IPv6_MULTI.jpg}
 \end{figure}
 
-Las direcciones multicast comienzan con el prefijo \textbf{FF::/8}.
+Las direcciones multicast comienzan con el prefijo \textbf{FF00::/8}.\\
+
+Los cuatros bits menos significativos del segundo octeto de una dirección multicast (ff0X::) identifican el ámbito, es decir, hasta dónde se propaga el tráfico multicast.
+
+\begin{table}[H]\centering\begin{tabular}{ll}
+0000 & reserved           \\ 
+0001 & interface-local    \\ 
+0010 & link-local         \\ 
+0100 & admin-local        \\ 
+0101 & site-local         \\ 
+1000 & organization-local \\ 
+1110 & global             \\ 
+1111 & reserved           \\ 
+\end{tabular}\end{table}
 %%
+\subsubsection{Dirección multicast de nodo solicitado}
+Una dirección multicast de nodo solicitado es una dirección que solo coincide con los últimos 24 bits de la dirección IPv6 unicast global de un dispositivo. De forma que los únicos dispositivos que deben procesar estos paquetes son aquellos que tienen estos mismos 24 bits menos significativos.
+
+\end{onepage}\begin{onepage}
 \subsubsection{Direcciones públicas y privadas}
 Las direcciones \textbf{Global Unicast} en IPv6 son el equivalente de las direcciones IP públicas en IPv4. Estas direcciones IP pueden ser encaminadas a través de la Internet. Actualmente usan el prefijo \textbf{2000::/3}, que permite $2^{45}$ sitios diferentes.\\
 
 
 De igual modo que IPv4 dispone de direcciones \textbf{reservadas} para uso privado \textit{(Por ejemplo 192.168.x.x)}, IPv6 dispone de \textbf{ULA (Unique Local Addresses)}, que son todas las direcciones que comienzan con el prefijo \textbf{fc00::/7}.
+
+\begin{table}[H]\centering\begin{tabular}{ll}
+Multicast               & FF00::/8  \\
+ULA                     & FC00::/7  \\
+Global Unicast          & 2000::/3  \\
+Unicast de Enlace Local & FE80::/10 \\
+Unicast de Sitio Local  & FEC0::/10 \\
+Reservadas              & 0000::/8 
+\end{tabular}\end{table}
+
 %%
 \subsubsection{Ámbitos y zonas}
 Las direcciones IPv6 incluyen un \textbf{ámbito}, que indican en qué parte de la red la dirección es \textbf{válida}.\\
@@ -714,7 +759,7 @@ Un datagrama IPv6 está compuesto principalmente de dos partes: la cabecera y lo
 \end{itemize}
 %%
 \subsubsection{Fragmentación}
-Los routers IPv6 no hacen fragmentación. Los nodos IPv6 requieren ya sea hacer descubrimiento de MTU, realizar fragmentación extremo a extremo o enviar paquetes del tamaño mínimo MTU para IPv6 (1280 bytes).\\
+Los routers IPv6 no hacen fragmentación, ya que la fragmentación se realiza en el origen. Los nodos IPv6 requieren ya sea hacer descubrimiento de MTU, realizar fragmentación extremo a extremo o enviar paquetes del tamaño mínimo MTU para IPv6 (1280 bytes).\\
 
 \begin{figure}[H]
     \centering \includegraphics[width=\textwidth]{img/ipv6_fragm.png}
@@ -766,14 +811,14 @@ Se pueden realizar las siguientes funciones:
 \begin{itemize}
     \item \textbf{Descubrimiento de vecino.} Se utilizan dos tipos de mensajes:
     \begin{enumerate}
-        \item Neighbor Solicitation.
+        \item \textbf{Neighbor Solicitation.}
         Este mensaje se genera para:
         \begin{itemize}
             \item Averiguar la dirección física asociada a una dirección IP (como ARP request en IPv4).
             \item Determinar si un nodo vecino sigue siendo alcanzable.
             \item Detectar si la dirección IP está duplicada.
         \end{itemize}
-        \item Neighbor Advertisement.
+        \item \textbf{Neighbor Advertisement.}
         Este mensaje se genera para:
         \begin{itemize}
             \item Responder a un mensaje de solicitud de vecino (como ARP reply en IPv4).
@@ -782,9 +827,18 @@ Se pueden realizar las siguientes funciones:
     \end{enumerate}
     \item \textbf{Descubrimiento de router.} Se utilizan dos tipos de mensajes:
     \begin{enumerate}
-        \item Router Solicitation: este mensaje se genera tras la activación de un interfaz, para detectar los encaminadores y realizar la autoconfiguración del interfaz.
-        \item Router Advertisement: los envían los routers para anunciar su presencia en la red. Son enviados de forma periódica y como respuesta a mensajes Router Solicitation.
+        \item \textbf{Router Solicitation:} este mensaje se genera tras la activación de un interfaz, para detectar los encaminadores y realizar la autoconfiguración del interfaz.
+        \item \textbf{Router Advertisement:} los envían los routers para anunciar su presencia en la red. Son enviados de forma periódica y como respuesta a mensajes Router Solicitation.
     \end{enumerate}
+    \begin{tcolorbox}[
+title=Método EUI-65,
+colback=cyan!5!white,
+colframe=cyan!75!black,
+fonttitle=\bfseries]
+Consiste en generar una dirección IPv6 a partir de la dirección MAC del dispositivo, de manera que la propia dirección contiene los números de la dirección MAC que la ha generado\\
+
+Esto conlleva un \textbf{problema de privacidad}, ya que a partir de la dirección se puede obtener la MAC. Para solucionarlo, la dirección IPv6 no contiene la dirección MAC tal cual, si no que la genera de forma pseudoaleatoria.
+\end{tcolorbox}
     \item \textbf{Redirección.} Permite notificar a un host una ruta más adecuada para alcanzar un determinado destino.
 \end{itemize}
 \end{onepage}
@@ -821,6 +875,13 @@ adecuado para alcanzar el destino. Esta elección la realiza según:
         \item \textbf{Routers Internos: }interconectan redes dentro del propio AS. Utilizan \textbf{protocolos internos (IGP)} como RIP o OSPF.
         \item \textbf{Routers Frontera: }interconectan varios ASs. Utilizan \textbf{protocolos externos (EGP)} como BGP.
     \end{itemize}
+    \textbf{Tipos}
+    
+    \begin{itemize}
+        \item \textbf{Stub:} conectado únicamente a otro AS, es destino u origen para el tráfico. No permite transportar tráfico de tránsito de un AS a otro AS.
+        \item \textbf{Multihomed:} conectado a varios AS, pero sigue siendo destino y origen del tráfico de red. No permite transportar tráfico de tránsito.
+        \item \textbf{Tránsito:} AS de tipo multihomed que permite el tráfico de tránsito
+    \end{itemize}
     \end{tcolorbox}
 \begin{onepage}
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -843,7 +904,7 @@ adecuado para alcanzar el destino. Esta elección la realiza según:
     \begin{onepage}
     %%%%%%%%%%%%%%%%%%%%%%
     \subsection{Problemas}
-     El algoritmo Bellman-Ford utilizado en Vector de Distancias no previene de la aparición de bucles. El problema de la \textbf{cuenta a infinito} es que hace que los costes o distancias se incrementen indefinidamente sin que el algoritmo llegue a converger nunca.
+     El algoritmo Bellman-Ford utilizado en Vector de Distancias no previene de la aparición de bucles. El problema de la \textbf{cuenta a infinito} hace que los costes o distancias se incrementen indefinidamente sin que el algoritmo llegue a converger nunca.
     \begin{figure}[H]
     \centering \includegraphics[width=0.7\textwidth]{img/CuentaAInfinito.png}
     \end{figure}
@@ -868,9 +929,9 @@ adecuado para alcanzar el destino. Esta elección la realiza según:
     %%%%%
     \subsubsection{Versiones}
     \begin{itemize}
-        \item RIP versión 1 (1993).
-        \item RIP versión 2 (1998).
-        \item RIPng para IPv6 (1997).
+        \item RIP versión 1.
+        \item RIP versión 2.
+        \item RIPng para IPv6.
     \end{itemize}
     %%%%%
     \subsubsection{Mensajes}
@@ -881,7 +942,7 @@ adecuado para alcanzar el destino. Esta elección la realiza según:
     Los mensajes RIP pueden ser de dos tipos:
     \begin{itemize}
         \item \textbf{Petición (REQUEST): }enviados por algún encaminador recientemente iniciado que solicita información de los encaminadores vecinos.
-        \item \textbf{Respuesta: (RESPONSE)}mensajes con la actualización de las tablas de encaminamiento. Existen tres tipos:
+        \item \textbf{Respuesta (RESPONSE): }mensajes con la actualización de las tablas de encaminamiento. Existen tres tipos:
         \begin{enumerate}
             \item Periódicos: Se envían cada 30 segundos. Para indicar que el enlace y la ruta siguen activos. Se envía la tabla de encaminado completa.
             \item Mensajes enviados como respuesta a mensajes de petición.
@@ -970,6 +1031,20 @@ Los encaminadores intercambian la tabla de rutas cuando establecen la conexión 
 \begin{itemize}
     \item \textbf{OPEN: }Establece la sesión BGP. Incluye identificador de AS y parámetros de configuración.
     \item \textbf{UPDATE: }Actualización incremental de la información de encaminamiento. Cada mensaje puede incluir una red alcanzable en CIDR con sus atributos, incluida la ruta, y una lista de redes retiradas.
+    Los mensajes \textbf{UPDATE} tienen dos tipos de atributos.
+    \begin{itemize}
+    \item \textbf{Well-known}: deben ser admitidos en todas las implementaciones de BGP. Pueden ser:
+    \begin{itemize}
+        \item \textbf{Mandatory: }son obligatorios. Ejemplos:
+        \begin{itemize}
+            \item \textbf{ORIGIN: }origen de la información.
+            \item \textbf{AS\_PATH: }lista de AS que forman la ruta.
+            \item \textbf{NEXT\_HOP: }dirección IP del siguiente salto para alcanzar el destino.
+        \end{itemize}
+        \item \textbf{Discretionary: }no son obligatorios.
+    \end{itemize}
+    \item \textbf{Opcionales}: son específicos de cada implementación de BGP.
+\end{itemize}
     \item \textbf{NOTIFICATION: }Se envía a los vecinos cuando se detecta un error. Implica un cierre de la sesión y la invalidación de las rutas asociadas.
     \item \textbf{KEEPALIVE: }Para asegurar que la sesión permanezca activa. Se envía en respuesta a un mensaje OPEN y periódicamente para informar de la
     presencia del encaminador. Si pasado un tiempo (hold) no se recibe información, se cierra la sesión.
@@ -985,7 +1060,7 @@ Un \textbf{Firewall:} es un dispositivo configurado para permitir, limitar, cifr
 \subsubsection{Tipos de Firewall.}
 \begin{itemize}
     \item \textbf{En función del estado (stateless/stateful): }Si el filtrado se basa únicamente en la cabecera del paquete o además considera el estado de la conexión.
-    \item \textbf{En función de la capa (de red o de aplicación):} consideran información no solo de las cabeceras si no de los datos(que normalmente pertenecen a protocolos de aplicación como http). Este tipo de firewalls se dice que realizan DPI (Deep packet inspection).
+    \item \textbf{En función de la capa (de red o de aplicación):} consideran información no solo de las cabeceras si no de los datos (que normalmente pertenecen a protocolos de aplicación como http). Este tipo de firewalls se dice que realizan DPI (Deep packet inspection).
 \end{itemize}
 
 \subsection{Iptables.}
